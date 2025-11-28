@@ -1,6 +1,5 @@
 using CarRental.Domain.InternalData.ComponentEnums;
 
-
 namespace CarRental.Domain.InternalData.ComponentClasses;
 
 /// <summary>

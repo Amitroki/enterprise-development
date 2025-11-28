@@ -1,6 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
 using CarRental.Domain.InternalData.ComponentClasses;
 
 namespace CarRental.Domain.DataModels;

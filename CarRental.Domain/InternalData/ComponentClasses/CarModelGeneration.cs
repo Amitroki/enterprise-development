@@ -1,7 +1,7 @@
 using CarRental.Domain.InternalData.ComponentClasses;
 using CarRental.Domain.InternalData.ComponentEnums;
 
-namespace CarRental.Domain.IntenralData.ComponentClasses;
+namespace CarRental.Domain.InternalData.ComponentClasses;
 
 /// <summary>
 /// Represents a specific generation of a car model, 
