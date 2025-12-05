@@ -1,43 +1,65 @@
 using CarRental.Domain.DataModels;
 using CarRental.Domain.InternalData.ComponentClasses;
+using CarRental.Domain.InternalData.ComponentEnums;
 
 namespace CarRental.Domain.DataSeed;
 
+/// <summary>
+/// Provides a fixed set of pre-initialized domain entities for testing and demonstration purposes
+/// </summary>
 public class DataSeed {
+    /// <summary>
+    /// List of physical vehicles available for rental
+    /// </summary>
     public List<Car> Cars { get; }
-    
+
+    /// <summary>
+    /// List of registered clients
+    /// </summary>
     public List<Client> Clients { get; }
 
+    /// <summary>
+    /// List of rental agreements linking clients to specific cars
+    /// </summary>
     public List<Rent> Rents { get; }
 
+    /// <summary>
+    /// List of car models representing vehicle
+    /// </summary>
     public List <CarModel> Models { get; }
 
+    /// <summary>
+    /// List of car model generations
+    /// </summary>
     public List<CarModelGeneration> Generation { get; }
 
+    /// <summary>
+    /// Constructor implementation
+    /// </summary>
     public DataSeed()
     {
         Models = new List<CarModel>
         {
-            new CarModel { Id = 1, Name = "Fiat 500", DriveType = DriveType.FrontWheel, SeatsNumber = 4, BodyType = BodyType.CityCar, ClassType = ClassType.A },
-            new CarModel { Id = 2, Name = "Subaru Outback", DriveType = DriveType.AllWheel, SeatsNumber = 5, BodyType = BodyType.StationWagon, ClassType = ClassType.D },
-            new CarModel { Id = 3, Name = "Volkswagen Golf", DriveType = DriveType.FrontWheel, SeatsNumber = 5, BodyType = BodyType.Hatchback, ClassType = ClassType.C },
-            new CarModel { Id = 4, Name = "Mazda CX-5", DriveType = DriveType.AllWheel, SeatsNumber = 5, BodyType = BodyType.SportUtilityVehicle, ClassType = ClassType.C },
-            new CarModel { Id = 5, Name = "Nissan Qashqai", DriveType = DriveType.AllWheel, SeatsNumber = 5, BodyType = BodyType.Crossover, ClassType = ClassType.C },
-            new CarModel { Id = 6, Name = "Volvo XC90", DriveType = DriveType.AllWheel, SeatsNumber = 7, BodyType = BodyType.SportUtilityVehicle, ClassType = ClassType.E },
-            new CarModel { Id = 7, Name = "Audi A4", DriveType = DriveType.FrontWheel, SeatsNumber = 5, BodyType = BodyType.Sedan, ClassType = ClassType.D },
-            new CarModel { Id = 8, Name = "Honda CR-V", DriveType = DriveType.AllWheel, SeatsNumber = 5, BodyType = BodyType.SportUtilityVehicle, ClassType = ClassType.D },
-            new CarModel { Id = 9, Name = "Hyundai Tucson", DriveType = DriveType.AllWheel, SeatsNumber = 5, BodyType = BodyType.SportUtilityVehicle, ClassType = ClassType.C },
-            new CarModel { Id = 10, Name = "Volkswagen Transporter", DriveType = DriveType.RearWheel, SeatsNumber = 9, BodyType = BodyType.Van, ClassType = ClassType.F },
-            new CarModel { Id = 11, Name = "Mercedes E-Class", DriveType = DriveType.RearWheel,SeatsNumber = 5, BodyType = BodyType.Sedan, ClassType = ClassType.E },
-            new CarModel { Id = 12, Name = "Ford Focus", DriveType = DriveType.FrontWheel, SeatsNumber = 5, BodyType = BodyType.Hatchback, ClassType = ClassType.C },
-            new CarModel { Id = 13, Name = "Jaguar F-Type", DriveType = DriveType.RearWheel, SeatsNumber = 2, BodyType = BodyType.Coupe, ClassType = ClassType.E },
-            new CarModel { Id = 14, Name = "Tesla Model 3", DriveType = DriveType.AllWheel, SeatsNumber = 5, BodyType = BodyType.Sedan, ClassType = ClassType.D },
-            new CarModel { Id = 15, Name = "Toyota Camry", DriveType = DriveType.FrontWheel, SeatsNumber = 5, BodyType = BodyType.Sedan, ClassType = ClassType.D },
-            new CarModel { Id = 16, Name = "Lexus LS", DriveType = DriveType.AllWheel, SeatsNumber = 5, BodyType = BodyType.Sedan, ClassType = ClassType.F },
-            new CarModel { Id = 17, Name = "Porsche 911", DriveType = DriveType.RearWheel, SeatsNumber = 2, BodyType = BodyType.SportsCar, ClassType = ClassType.E },
-            new CarModel { Id = 18, Name = "Renault Megane", DriveType = DriveType.FrontWheel, SeatsNumber = 5, BodyType = BodyType.Hatchback, ClassType = ClassType.C },
-            new CarModel { Id = 19, Name = "BMW X5", DriveType = DriveType.AllWheel, SeatsNumber = 5, BodyType = BodyType.SportUtilityVehicle, ClassType = ClassType.E },
-            new CarModel { Id = 20, Name = "Kia Rio", DriveType = DriveType.FrontWheel, SeatsNumber = 5, BodyType = BodyType.Sedan, ClassType = ClassType.B }
+            new CarModel { Id = 1, Name = "Fiat 500", DriveType = InternalData.ComponentEnums.DriveType.FrontWheel, SeatsNumber = 4, BodyType = BodyType.CityCar, ClassType = ClassType.A },
+            new CarModel { Id = 2, Name = "Subaru Outback", DriveType = InternalData.ComponentEnums.DriveType.AllWheel, SeatsNumber = 5, BodyType = BodyType.StationWagon, ClassType = ClassType.D },
+            new CarModel { Id = 3, Name = "Volkswagen Golf", DriveType = InternalData.ComponentEnums.DriveType.FrontWheel, SeatsNumber = 5, BodyType = BodyType.Hatchback, ClassType = ClassType.C },
+            new CarModel { Id = 4, Name = "Mazda CX-5", DriveType = InternalData.ComponentEnums.DriveType.AllWheel, SeatsNumber = 5, BodyType = BodyType.SportUtilityVehicle, ClassType = ClassType.C },
+            new CarModel { Id = 5, Name = "Nissan Qashqai", DriveType = InternalData.ComponentEnums.DriveType.AllWheel, SeatsNumber = 5, BodyType = BodyType.Crossover, ClassType = ClassType.C },
+            new CarModel { Id = 6, Name = "Volvo XC90", DriveType = InternalData.ComponentEnums.DriveType.AllWheel, SeatsNumber = 7, BodyType = BodyType.SportUtilityVehicle, ClassType = ClassType.E },
+            new CarModel { Id = 7, Name = "Audi A4", DriveType = InternalData.ComponentEnums.DriveType.FrontWheel, SeatsNumber = 5, BodyType = BodyType.Sedan, ClassType = ClassType.D },
+            new CarModel { Id = 8, Name = "Honda CR-V", DriveType = InternalData.ComponentEnums.DriveType.AllWheel, SeatsNumber = 5, BodyType = BodyType.SportUtilityVehicle, ClassType = ClassType.D },
+            new CarModel { Id = 9, Name = "Hyundai Tucson", DriveType = InternalData.ComponentEnums.DriveType.AllWheel, SeatsNumber = 5, BodyType = BodyType.SportUtilityVehicle, ClassType = ClassType.C },
+            new CarModel { Id = 10, Name = "Volkswagen Transporter", DriveType = InternalData.ComponentEnums.DriveType.RearWheel, SeatsNumber = 9, BodyType = BodyType.Van, ClassType = ClassType.F },
+            new CarModel { Id = 11, Name = "Mercedes E-Class", DriveType = InternalData.ComponentEnums.DriveType.RearWheel,SeatsNumber = 5, BodyType = BodyType.Sedan, ClassType = ClassType.E },
+            new CarModel { Id = 12, Name = "Ford Focus", DriveType = InternalData.ComponentEnums.DriveType.FrontWheel, SeatsNumber = 5, BodyType = BodyType.Hatchback, ClassType = ClassType.C },
+            new CarModel { Id = 13, Name = "Jaguar F-Type", DriveType = InternalData.ComponentEnums.DriveType.RearWheel, SeatsNumber = 2, BodyType = BodyType.Coupe, ClassType = ClassType.E },
+            new CarModel { Id = 14, Name = "Tesla Model 3", DriveType = InternalData.ComponentEnums.DriveType.AllWheel, SeatsNumber = 5, BodyType = BodyType.Sedan, ClassType = ClassType.D },
+            new CarModel { Id = 15, Name = "Toyota Camry", DriveType = InternalData.ComponentEnums.DriveType.FrontWheel, SeatsNumber = 5, BodyType = BodyType.Sedan, ClassType = ClassType.D },
+            new CarModel { Id = 16, Name = "Lexus LS", DriveType = InternalData.ComponentEnums.DriveType.AllWheel, SeatsNumber = 5, BodyType = BodyType.Sedan, ClassType = ClassType.F },
+            new CarModel { Id = 17, Name = "Porsche 911", DriveType = InternalData.ComponentEnums.DriveType.RearWheel, SeatsNumber = 2, BodyType = BodyType.SportsCar, ClassType = ClassType.E },
+            new CarModel { Id = 18, Name = "Renault Megane", DriveType = InternalData.ComponentEnums.DriveType.FrontWheel, SeatsNumber = 5, BodyType = BodyType.Hatchback, ClassType = ClassType.C },
+            new CarModel { Id = 19, Name = "BMW X5", DriveType = InternalData.ComponentEnums.DriveType.AllWheel, SeatsNumber = 5, BodyType = BodyType.SportUtilityVehicle, ClassType = ClassType.E },
+            new CarModel { Id = 20, Name = "Kia Rio", DriveType = InternalData.ComponentEnums.DriveType.FrontWheel, SeatsNumber = 5, BodyType = BodyType.Sedan, ClassType = ClassType.B }
         };
 
         Generation = new List<CarModelGeneration>
@@ -138,29 +160,24 @@ public class DataSeed {
             new Rent { Id = 21, StartDateTime = baseTime.AddDays(-25), Duration = 12, Car = Cars[5], Client = Clients[0] },
             new Rent { Id = 22, StartDateTime = baseTime.AddDays(-10), Duration = 24, Car = Cars[0], Client = Clients[1] },
             new Rent { Id = 23, StartDateTime = baseTime.AddDays(-5), Duration = 8, Car = Cars[10], Client = Clients[1] },
-            ///
             new Rent { Id = 24, StartDateTime = baseTime.AddDays(-20), Duration = 48, Car = Cars[3], Client = Clients[2] },
             new Rent { Id = 25, StartDateTime = baseTime.AddDays(-15), Duration = 6, Car = Cars[7], Client = Clients[2] },
             new Rent { Id = 26, StartDateTime = baseTime.AddDays(-8), Duration = 12, Car = Cars[15], Client = Clients[2] },
-            ///
             new Rent { Id = 27, StartDateTime = baseTime.AddDays(-22), Duration = 24, Car = Cars[4], Client = Clients[3] },
             new Rent { Id = 28, StartDateTime = baseTime.AddDays(-18), Duration = 36, Car = Cars[8], Client = Clients[3] },
             new Rent { Id = 29, StartDateTime = baseTime.AddDays(-12), Duration = 12, Car = Cars[12], Client = Clients[3] },
             new Rent { Id = 30, StartDateTime = baseTime.AddDays(-6), Duration = 6, Car = Cars[17], Client = Clients[3] },
-            ///
             new Rent { Id = 31, StartDateTime = baseTime.AddDays(-28), Duration = 72, Car = Cars[1], Client = Clients[4] },
             new Rent { Id = 32, StartDateTime = baseTime.AddDays(-24), Duration = 24, Car = Cars[6], Client = Clients[4] },
             new Rent { Id = 33, StartDateTime = baseTime.AddDays(-20), Duration = 48, Car = Cars[9], Client = Clients[4] },
             new Rent { Id = 34, StartDateTime = baseTime.AddDays(-16), Duration = 12, Car = Cars[13], Client = Clients[4] },
             new Rent { Id = 35, StartDateTime = baseTime.AddDays(-10), Duration = 8, Car = Cars[18], Client = Clients[4] },
-            ///
             new Rent { Id = 36, StartDateTime = baseTime.AddDays(-30), Duration = 168, Car = Cars[2], Client = Clients[5] },
             new Rent { Id = 37, StartDateTime = baseTime.AddDays(-26), Duration = 24, Car = Cars[7], Client = Clients[5] },
             new Rent { Id = 38, StartDateTime = baseTime.AddDays(-22), Duration = 48, Car = Cars[11], Client = Clients[5] },
             new Rent { Id = 39, StartDateTime = baseTime.AddDays(-18), Duration = 6, Car = Cars[14], Client = Clients[5] },
             new Rent { Id = 40, StartDateTime = baseTime.AddDays(-14), Duration = 12, Car = Cars[16], Client = Clients[5] },
             new Rent { Id = 41, StartDateTime = baseTime.AddDays(-10), Duration = 24, Car = Cars[19], Client = Clients[5] },
-            ///
             new Rent { Id = 42, StartDateTime = baseTime.AddDays(-3), Duration = 10, Car = Cars[0], Client = Clients[6] },
             new Rent { Id = 43, StartDateTime = baseTime.AddDays(-1), Duration = 5, Car = Cars[2], Client = Clients[7] },
             new Rent { Id = 44, StartDateTime = baseTime.AddDays(1), Duration = 7, Car = Cars[5], Client = Clients[8] },

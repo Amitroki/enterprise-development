@@ -1,4 +1,5 @@
 using CarRental.Domain.InternalData.ComponentEnums;
+using DriveType = CarRental.Domain.InternalData.ComponentEnums.DriveType;
 
 namespace CarRental.Domain.InternalData.ComponentClasses;
 
