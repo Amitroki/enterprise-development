@@ -3,7 +3,8 @@ namespace CarRental.Domain.InternalData.ComponentEnums;
 /// <summary>
 /// Type of vehicle body style
 /// </summary>
-public enum BodyType {
+public enum BodyType 
+{
     /// <summary>
     /// Ultra-small city car designed for maximum fuel efficiency and maneuverability
     /// </summary>

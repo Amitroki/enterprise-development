@@ -3,7 +3,8 @@ namespace CarRental.Domain.DataModels;
 /// <summary>
 /// Represents a client (rental customer) with personal and identification information
 /// <summary>
-public class Client {
+public class Client 
+{
     /// <summary>
     /// Unique identifier of the client
     /// <summary>

@@ -13,7 +13,7 @@ public class CarModelGeneration
     /// <summary>
     /// Unique identifier of the car model generation
     /// </summary>
-    public required int Id { get; set; }
+    public required uint Id { get; set; }
 
     /// <summary>
     /// Calendar year when this generation of the car model was produced
@@ -35,5 +35,5 @@ public class CarModelGeneration
     /// <summary>
     /// Rental cost per hour for vehicles of this model generation
     /// </summary>
-    public required float HourCost { get; set; }
+    public required decimal HourCost { get; set; }
 }

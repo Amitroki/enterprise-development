@@ -3,7 +3,8 @@ namespace CarRental.Domain.InternalData.ComponentEnums;
 /// <summary>
 /// The type of vehicle drive system
 /// </summary>
-public enum DriveType {
+public enum DriveType 
+{
     /// <summary>
     /// Front-wheel drive, where power is delivered to the front wheels
     /// </summary>

@@ -4,51 +4,35 @@ using Xunit.Abstractions;
 namespace CarRental.Tests;
 
 /// <summary>
-/// A class that contains unit tests for checking various scenarios of using the main classes
+/// Unit tests for rental domain analytics, initialized with shared test data and output helper.
+/// The primary constructor accepts:
+/// - <paramref name="fixture"/>: Pre-filled domain entities (clients, cars, models, rentals).
+/// - <paramref name="output"/>: xUnit helper for diagnostic logging in test results.
 /// </summary>
-public class DomainTests : IClassFixture<DataSeed>
+public class DomainTests(
+    DataSeed fixture,
+    ITestOutputHelper output) : IClassFixture<DataSeed>
 {
-    /// <summary>
-    /// Shared test data fixture providing pre-initialized domain entities 
-    /// (clients, cars, models, rentals, etc.) for all test methods in this class
-    /// </summary>
-    private readonly DataSeed _fixture;
-
-    /// <summary>
-    /// Helper for writing diagnostic output during test execution; 
-    /// messages are visible in test logs (e.g., in Test Explorer or CI reports)
-    /// </summary>
-    private readonly ITestOutputHelper _output;
-
-    /// <summary>
-    /// Initializes a new instance of the test class with shared test data and output helper
-    /// </summary>
-    public DomainTests(DataSeed fixture, ITestOutputHelper output)
-    {
-        _fixture = fixture;
-        _output = output;
-    }
-
     /// <summary>
     /// 1. Output of clients who rented vehicles of a specified model, 
     /// ordered by last name, first name, and patronymic
     /// </summary>
     [Fact]
-    public void Should_Return_Clients_Sorted_By_FullName_For_Given_Car_Model()
+    public void GetClientsByModelName_WhenModelHasRentals_ReturnsClientsSortedByFullName()
     {
-        var target = _fixture.Models[9]; // Volkswagen Transporter
+        var target = fixture.Models[9]; // Volkswagen Transporter
 
-        var targetClients = _fixture.Rents
-            .Where(r => r.Car.ModelGeneration.Model.Name == target.Name)
+        var targetClients = fixture.Rents
+            .Where(r => r.Car?.ModelGeneration.Model?.Name == target.Name)
             .Select(r => r.Client)
             .Distinct()
             .OrderBy(c => c.LastName)
             .ThenBy(c => c.FirstName)
-            .ThenBy(c => c.Patronymic)
+            .ThenBy(c => c.Patronymic ?? string.Empty)
             .ToList();
         foreach (var client in targetClients)
         {
-            _output.WriteLine($"{client.Id} {client.LastName} {client.FirstName} {client.Patronymic ?? ""} {client.BirthDate?.ToString() ?? ""}");
+            output.WriteLine($"{client.Id} {client.LastName} {client.FirstName} {client.Patronymic ?? ""} {client.BirthDate?.ToString() ?? ""}");
         }
 
         var correctId = new uint[] { 15, 5 };
@@ -60,11 +44,11 @@ public class DomainTests : IClassFixture<DataSeed>
     /// 2. Output of vehicles currently in rental as of January 1, 2025, 10:00
     /// </summary>
     [Fact]
-    public void CarsInRentAtBaseTime_AreListedCorrectly()
+    public void GetCarsInRent_WhenCheckedAtBaseTime_ReturnsActiveRentalCars()
     {
         var now = new DateTime(2025, 1, 1, 10, 0, 0, DateTimeKind.Utc);
 
-        var carsInRent = _fixture.Rents
+        var carsInRent = fixture.Rents
             .Where(r => r.StartDateTime <= now && now < r.StartDateTime.AddHours(r.Duration))
             .Select(r => r.Car)
             .Distinct()
@@ -73,7 +57,7 @@ public class DomainTests : IClassFixture<DataSeed>
 
         foreach (var car in carsInRent)
         {
-            _output.WriteLine($"{car.Id} {car.ModelGeneration.Model?.Name ?? ""} {car.NumberPlate} {car.Colour}");
+            output.WriteLine($"{car.Id} {car.ModelGeneration.Model?.Name ?? ""} {car.NumberPlate} {car.Colour}");
         }
 
         var correctCount = 1;
@@ -85,9 +69,9 @@ public class DomainTests : IClassFixture<DataSeed>
     /// sorted in descending order by rental count
     /// </summary>
     [Fact]
-    public void Top5MostRentedCars_AreReturnedInDescendingOrder()
+    public void GetTopRentedCars_WhenAllRentalsExist_ReturnsTop5CarsOrderedByRentalCountDescending()
     {
-        var topCars = _fixture.Rents
+        var topCars = fixture.Rents
             .GroupBy(r => r.Car)
             .Select(g => new { Car = g.Key, RentCount = g.Count() })
             .OrderByDescending(x => x.RentCount)
@@ -97,7 +81,7 @@ public class DomainTests : IClassFixture<DataSeed>
 
         foreach (var item in topCars)
         {
-            _output.WriteLine($"{item.Car.Id} {item.Car.ModelGeneration.Model?.Name ?? ""} {item.RentCount}");
+            output.WriteLine($"{item.Car.Id} {item.Car.ModelGeneration.Model?.Name ?? ""} {item.RentCount}");
         }
 
         Assert.Equal(5, topCars.Count);
@@ -109,17 +93,17 @@ public class DomainTests : IClassFixture<DataSeed>
     /// including vehicles with zero rentals
     /// </summary>
     [Fact]
-    public void AllCars_IncludeRentalCount_EvenIfZero()
+    public void GetAllCars_WhenFleetIsInitialized_ReturnsAllCarsWithRentalCountIncludingZero()
     {
-        foreach (var car in _fixture.Cars.OrderBy(c => c.Id))
+        foreach (var car in fixture.Cars.OrderBy(c => c.Id))
         {
-            _output.WriteLine(
+            output.WriteLine(
                 $"{car.Id} {car.ModelGeneration.Model?.Name ?? "Unknown"} {car.NumberPlate} " +
-                $"{car.Colour} {_fixture.Rents.Count(r => r.Car.Id == car.Id)}"
+                $"{car.Colour} {fixture.Rents.Count(r => r.Car.Id == car.Id)}"
             );
         }
 
-        Assert.Equal(20, _fixture.Cars.Count);
+        Assert.Equal(20, fixture.Cars.Count);
     }
 
     /// <summary>
@@ -127,14 +111,14 @@ public class DomainTests : IClassFixture<DataSeed>
     /// calculated as the sum of (duration × hourly cost) for all their rentals
     /// </summary>
     [Fact]
-    public void Top5ClientsByTotalRentalAmount_AreReturnedCorrectly()
+    public void GetTopClientsByTotalRentalAmount_WhenRentalsHaveDurationAndCost_ReturnsTop5ClientsOrderedByAmountDescending()
     {
-        var clientTotals = _fixture.Rents
+        var clientTotals = fixture.Rents
             .GroupBy(r => r.Client)
             .Select(g => new
             {
                 Client = g.Key,
-                TotalAmount = g.Sum(r => r.Duration * r.Car.ModelGeneration.HourCost)
+                TotalAmount = g.Sum(r => Convert.ToDecimal(r.Duration) * r.Car.ModelGeneration.HourCost)
             })
             .OrderByDescending(x => x.TotalAmount)
             .ThenBy(x => x.Client.Id)
@@ -143,7 +127,7 @@ public class DomainTests : IClassFixture<DataSeed>
 
         foreach (var item in clientTotals)
         {
-            _output.WriteLine(
+            output.WriteLine(
                 $"{item.Client.LastName} {item.Client.FirstName} " +
                 $"{item.Client.Id} {item.TotalAmount:F2}"
             );
