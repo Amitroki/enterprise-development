@@ -3,7 +3,8 @@ namespace CarRental.Domain.InternalData.ComponentEnums;
 /// <summary>
 /// The type of vehicle transmission
 /// </summary>
-public enum TransmissionType {
+public enum TransmissionType 
+{
     /// <summary>
     /// Manual gearbox with driver-operated gear shifting
     /// </summary>

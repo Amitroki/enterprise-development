@@ -5,11 +5,12 @@ namespace CarRental.Domain.DataModels;
 /// <summary>
 /// Represents a specific physical vehicle available for rental
 /// </summary>
-public class Car {
+public class Car 
+{
     /// <summary>
     /// Unique identifier of the car
     /// </summary>
-    public required int Id { get; set; }
+    public required uint Id { get; set; }
 
     /// <summary>
     /// The model generation this car belongs to, defining its year, transmission type, and base rental cost

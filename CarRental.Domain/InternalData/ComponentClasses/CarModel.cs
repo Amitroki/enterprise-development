@@ -12,12 +12,12 @@ public class CarModel
     /// <summary>
     /// Unique identifier of the car model
     /// </summary>
-    public required int Id { get; set; }
+    public required uint Id { get; set; }
 
     /// <summary>
     /// Name of the car model (e.g., "Camry", "Golf", "Model 3")
     /// </summary>
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     /// <summary>
     /// Type of drive system used by the car model (front-wheel, rear-wheel or all-wheel drive)

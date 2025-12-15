@@ -3,7 +3,8 @@ namespace CarRental.Domain.InternalData.ComponentEnums;
 /// <summary>
 /// Vehicle classification based on size and segment
 /// </summary>
-public enum ClassType {
+public enum ClassType 
+{
     /// <summary>
     /// Mini cars, the smallest urban vehicle class
     /// </summary>
