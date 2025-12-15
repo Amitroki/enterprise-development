@@ -32,7 +32,7 @@ public class DataSeed
     /// <summary>
     /// List of car model generations
     /// </summary>
-    public List<CarModelGeneration> Generation { get; }
+    public List<CarModelGeneration> Generations { get; }
 
     /// <summary>
     /// Constructor implementation
@@ -63,7 +63,7 @@ public class DataSeed
             new() { Id = 20, Name = "Kia Rio", DriveType = InternalData.ComponentEnums.DriveType.FrontWheel, SeatsNumber = 5, BodyType = BodyType.Sedan, ClassType = ClassType.B }
         };
 
-        Generation = new List<CarModelGeneration>
+        Generations = new List<CarModelGeneration>
         {
             new() { Id = 1, Year = 2019, TransmissionType = TransmissionType.Manual, Model = Models[16], HourCost = 160.00m }, // Porsche 911
             new() { Id = 2, Year = 2022, TransmissionType = TransmissionType.Automatic, Model = Models[0], HourCost = 35.00m },  // Fiat 500
