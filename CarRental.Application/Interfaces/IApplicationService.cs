@@ -1,4 +1,4 @@
-namespace CarRental.Application.Contracts.Interfaces;
+namespace CarRental.Application.Interfaces;
 
 public interface IApplicationService<TDto, TCreateUpdateDto, TKey>
     where TDto : class

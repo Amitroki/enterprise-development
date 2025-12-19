@@ -1,4 +1,4 @@
-namespace CarRental.Application.Contracts;
+namespace CarRental.Application.Interfaces;
 
 public interface IAnalyticsService
 {
