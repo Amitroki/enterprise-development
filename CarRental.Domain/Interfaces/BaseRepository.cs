@@ -1,27 +1,25 @@
-namespace CarRental.Domain;
+namespace CarRental.Domain.Interfaces;
 
-public abstract class BaseRepository<TEntity, TKey>
+public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
 	where TEntity : class
-	where TKey: struct
 {
     private uint _nextId;
 
-    protected abstract TKey GetEntityId(TEntity entity);
+    protected abstract uint GetEntityId(TEntity entity);
 
-    protected abstract void SetEntityId(TEntity entity, TKey id);
+    protected abstract void SetEntityId(TEntity entity, uint id);
 
     private readonly List<TEntity> _entities;
 
-    protected Repository(List<TEntity>? entities = null)
+    protected BaseRepository(List<TEntity>? entities = null)
     {
-        if (entities != null)
+        _entities = entities ?? new List<TEntity>();
+        if (_entities.Count > 0)
         {
-            _entities = entities;
-            _nextId = _entities.Count + 1;
+            _nextId = _entities.Max(e => GetEntityId(e)) + 1;
         }
         else
         {
-            _entities = new List<TEntity>();
             _nextId = 1;
         }
     }
@@ -46,22 +44,26 @@ public abstract class BaseRepository<TEntity, TKey>
 
     public virtual List<TEntity> ReadAll()
     {
-        List<TEntity> copy = _entities;
-        return copy;
+       return _entities.ToList();
     }
 
     public virtual void Update(TEntity entity)
     {
-        Delete(entity.Id);
-        _entities.Add(entity);
+        var existing = Read(id);
+        if (existing != null)
+        {
+            var index = _entities.IndexOf(existing);
+            SetEntityId(entity, id);
+            _entities[index] = entity;
+        }
     }
 
     public virtual bool Delete(uint id)
     {
-        if (_entities[id] != null)
+        var entity = Read(id);
+        if (entity != null)
         {
-            _entities.RemoveAt(id);
-            return true;
+            return _entities.Remove(entity);
         }
         return false;
     }

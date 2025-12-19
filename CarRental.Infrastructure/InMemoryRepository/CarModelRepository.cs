@@ -1,10 +1,10 @@
-using CarRental.Domain;
+using CarRental.Domain.Interfaces;
 using CarRental.Domain.DataModels;
 using CarRental.Domain.DataSeed;
 
 namespace CarRental.Infrastructure.InMemoryRepository;
 
-public class RentRepository(DataSeed data) : BaseRepository<CarModel, uint>(data.Models)
+public class CarModelRepository(DataSeed data) : BaseRepository<CarModel>(data.Models)
 {
     protected override uint GetEntityId(CarModel model) => model.Id;
 
