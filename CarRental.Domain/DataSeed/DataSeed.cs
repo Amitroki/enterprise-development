@@ -89,26 +89,26 @@ public class DataSeed
 
         Cars = new List<Car>
         {
-            new() { Id = 1, ModelGeneration = Generation[5], NumberPlate = "T890NO96", Colour = "Gray" },
-            new() { Id = 2, ModelGeneration = Generation[14], NumberPlate = "A123BC77", Colour = "Black" },
-            new() { Id = 3, ModelGeneration = Generation[0], NumberPlate = "M789ZA89", Colour = "Yellow" },
-            new() { Id = 4, ModelGeneration = Generation[19], NumberPlate = "D012HI80", Colour = "Blue" },
-            new() { Id = 5, ModelGeneration = Generation[6], NumberPlate = "E345JK81", Colour = "Red" },
-            new() { Id = 6, ModelGeneration = Generation[16], NumberPlate = "F678LM82", Colour = "Gray" },
-            new() { Id = 7, ModelGeneration = Generation[7], NumberPlate = "G901NO83", Colour = "Green" },
-            new() { Id = 8, ModelGeneration = Generation[13], NumberPlate = "H234PQ84", Colour = "Black" },
-            new() { Id = 9, ModelGeneration = Generation[3], NumberPlate = "I567RS85", Colour = "White" },
-            new() { Id = 10, ModelGeneration = Generation[18], NumberPlate = "J890TU86", Colour = "Silver" },
-            new() { Id = 11, ModelGeneration = Generation[10], NumberPlate = "K123VW87", Colour = "Blue" },
-            new() { Id = 12, ModelGeneration = Generation[11], NumberPlate = "L456XY88", Colour = "Red" },
-            new() { Id = 13, ModelGeneration = Generation[8], NumberPlate = "R234JK94", Colour = "Blue" },
-            new() { Id = 14, ModelGeneration = Generation[9], NumberPlate = "N012BC90", Colour = "White" },
-            new() { Id = 15, ModelGeneration = Generation[1], NumberPlate = "Q901HI93", Colour = "Red" },
-            new() { Id = 16, ModelGeneration = Generation[15], NumberPlate = "P678FG92", Colour = "Silver" },
-            new() { Id = 17, ModelGeneration = Generation[2], NumberPlate = "O345DE91", Colour = "Black" },
-            new() { Id = 18, ModelGeneration = Generation[17], NumberPlate = "S567LM95", Colour = "Green" },
-            new() { Id = 19, ModelGeneration = Generation[4], NumberPlate = "C789FG79", Colour = "Silver" },
-            new() { Id = 20, ModelGeneration = Generation[12], NumberPlate = "B456DE78", Colour = "White" }
+            new() { Id = 1, ModelGeneration = Generations[5], NumberPlate = "T890NO96", Colour = "Gray" },
+            new() { Id = 2, ModelGeneration = Generations[14], NumberPlate = "A123BC77", Colour = "Black" },
+            new() { Id = 3, ModelGeneration = Generations[0], NumberPlate = "M789ZA89", Colour = "Yellow" },
+            new() { Id = 4, ModelGeneration = Generations[19], NumberPlate = "D012HI80", Colour = "Blue" },
+            new() { Id = 5, ModelGeneration = Generations[6], NumberPlate = "E345JK81", Colour = "Red" },
+            new() { Id = 6, ModelGeneration = Generations[16], NumberPlate = "F678LM82", Colour = "Gray" },
+            new() { Id = 7, ModelGeneration = Generations[7], NumberPlate = "G901NO83", Colour = "Green" },
+            new() { Id = 8, ModelGeneration = Generations[13], NumberPlate = "H234PQ84", Colour = "Black" },
+            new() { Id = 9, ModelGeneration = Generations[3], NumberPlate = "I567RS85", Colour = "White" },
+            new() { Id = 10, ModelGeneration = Generations[18], NumberPlate = "J890TU86", Colour = "Silver" },
+            new() { Id = 11, ModelGeneration = Generations[10], NumberPlate = "K123VW87", Colour = "Blue" },
+            new() { Id = 12, ModelGeneration = Generations[11], NumberPlate = "L456XY88", Colour = "Red" },
+            new() { Id = 13, ModelGeneration = Generations[8], NumberPlate = "R234JK94", Colour = "Blue" },
+            new() { Id = 14, ModelGeneration = Generations[9], NumberPlate = "N012BC90", Colour = "White" },
+            new() { Id = 15, ModelGeneration = Generations[1], NumberPlate = "Q901HI93", Colour = "Red" },
+            new() { Id = 16, ModelGeneration = Generations[15], NumberPlate = "P678FG92", Colour = "Silver" },
+            new() { Id = 17, ModelGeneration = Generations[2], NumberPlate = "O345DE91", Colour = "Black" },
+            new() { Id = 18, ModelGeneration = Generations[17], NumberPlate = "S567LM95", Colour = "Green" },
+            new() { Id = 19, ModelGeneration = Generations[4], NumberPlate = "C789FG79", Colour = "Silver" },
+            new() { Id = 20, ModelGeneration = Generations[12], NumberPlate = "B456DE78", Colour = "White" }
         };
 
         Clients = new List<Client>

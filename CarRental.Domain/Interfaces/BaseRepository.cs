@@ -39,7 +39,7 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
 
     public virtual TEntity? Read(uint id)
     {
-        return _entities.FirstOrDefault(c => c.Id == id);
+        return _entities.FirstOrDefault(e => GetEntityId(e) == id);
     }
 
     public virtual List<TEntity> ReadAll()
@@ -47,7 +47,7 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
        return _entities.ToList();
     }
 
-    public virtual void Update(TEntity entity)
+    public virtual void Update(TEntity entity, uint id)
     {
         var existing = Read(id);
         if (existing != null)

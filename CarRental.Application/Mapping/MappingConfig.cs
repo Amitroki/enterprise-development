@@ -1,5 +1,5 @@
 using Mapster;
-using CarRental.Application.Contracts;
+using CarRental.Application.Contracts.Car;
 using CarRental.Domain.DataModels;
 
 namespace CarRental.Application.Mapping;

@@ -1,5 +1,5 @@
 using CarRental.Domain.Interfaces;
-using CarRental.Domain.DataModels;
+using CarRental.Domain.InternalData.ComponentClasses;
 using CarRental.Domain.DataSeed;
 
 namespace CarRental.Infrastructure.InMemoryRepository;

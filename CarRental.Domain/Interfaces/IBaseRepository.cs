@@ -1,6 +1,6 @@
 namespace CarRental.Domain.Interfaces;
 
-public interface IBaseRepository<TEntity, TKey>
+public interface IBaseRepository<TEntity>
     where TEntity : class
 {
     uint Create(TEntity entity);

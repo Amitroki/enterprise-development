@@ -1,12 +1,12 @@
 using MapsterMapper;
-using CarRental.Application.Contracts;
-using CarRental.Application.Contracts.Interfaces;
+using CarRental.Application.Contracts.Car;
+using CarRental.Application.Interfaces;
 using CarRental.Domain.DataModels;
 using CarRental.Infrastructure.InMemoryRepository;
 
-namespace CarRental.Application.Services;
+namespace CarRental.Application.Services.CarService;
 
-public class CarService : IApplicationService<CarDto, CarCreateUpdateDto, uint>
+public class CarService : IApplicationService<CarDto, CarCreateUpdateDto>
 {
 	private readonly CarRepository _carRepo;
 	private readonly CarModelGenerationRepository _modelRepo;

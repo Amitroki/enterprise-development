@@ -1,14 +1,16 @@
+using CarRental.Application.Contracts.Car;
+
 namespace CarRental.Application.Interfaces;
 
 public interface IAnalyticsService
 {
-    List<ClientDto> ReadClientsByModelName(string modelName);
+    //public List<ClientDto> ReadClientsByModelName(string modelName);
 
-    List<CarDto> ReadCarsInRent(DateTime atTime);
+    public List<CarDto> ReadCarsInRent(DateTime atTime);
 
-    List<CarDto> ReadTop5MostRentedCars();
+    public List<CarDto> ReadTop5MostRentedCars();
 
-    List<CarWithRentalCountDto> ReadAllCarsWithRentalCount();
+    //public List<CarWithRentalCountDto> ReadAllCarsWithRentalCount();
 
-    List<ClientWithTotalAmountDto> ReadTop5ClientsByTotalAmount();
+    //public List<ClientWithTotalAmountDto> ReadTop5ClientsByTotalAmount();
 }

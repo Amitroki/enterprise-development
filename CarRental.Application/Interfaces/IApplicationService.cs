@@ -1,17 +1,16 @@
 namespace CarRental.Application.Interfaces;
 
-public interface IApplicationService<TDto, TCreateUpdateDto, TKey>
+public interface IApplicationService<TDto, TCreateUpdateDto>
     where TDto : class
     where TCreateUpdateDto : class
-    where TKey : struct
 {
     public TDto Create(TCreateUpdateDto dto);
 
-    public TDto? Read(TKey id);
+    public TDto? Read(uint id);
 
     public List<TDto> ReadAll();
 
-    public TDto Update(TCreateUpdateDto dto, TKey id);
+    public TDto Update(TCreateUpdateDto dto, uint id);
 
-    public bool Delete(TKey id);
+    public bool Delete(uint id);
 }
