@@ -1,14 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
+<ItemGroup>
     <ProjectReference Include="..\CarRental.Application.Contracts\CarRental.Application.Contracts.csproj" />
     <ProjectReference Include="..\CarRental.Domain\CarRental.Domain.csproj" />
-  </ItemGroup>
+</ItemGroup>
 
-  <PropertyGroup>
+<ItemGroup>
+    <PackageReference Include="Mapster" Version="7.4.0" />
+	<PackageReference Include="Mapster.DependencyInjection" Version="1.0.1" />
+</ItemGroup>
+
+<PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-  </PropertyGroup>
+</PropertyGroup>
 
 </Project>
