@@ -41,10 +41,13 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
-app.UseHttpsRedirection(); // Можно включить, если настроены сертификаты
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 app.MapControllers();

@@ -9,10 +9,16 @@ using Mapster;
 
 namespace CarRental.Application.Services;
 
+/// <summary>
+/// Implements business logic for data aggregation and rental statistics.
+/// </summary>
 public class AnalyticsService(
     IBaseRepository<Rent> rentRepository,
     IBaseRepository<Car> carRepository) : IAnalyticsService
 {
+    /// <summary>
+    /// Finds unique clients who rented cars of a specific model name.
+    /// </summary>
     public List<ClientDto> ReadClientsByModelName(string modelName)
     {
         return rentRepository.ReadAll()
@@ -21,6 +27,10 @@ public class AnalyticsService(
             .DistinctBy(c => c.Id)
             .ToList();
     }
+
+    /// <summary>
+    /// Identifies the top 5 most frequently rented cars.
+    /// </summary>
     public List<CarWithRentalCountDto> ReadTop5MostRentedCars()
     {
         return rentRepository.ReadAll()
@@ -35,6 +45,10 @@ public class AnalyticsService(
             .Take(5)
             .ToList();
     }
+
+    /// <summary>
+    /// Retrieves cars that were actively rented at a specific point in time.
+    /// </summary>
     public List<CarInRentDto> ReadCarsInRent(DateTime atTime)
     {
         return rentRepository.ReadAll()
@@ -48,6 +62,10 @@ public class AnalyticsService(
             ))
             .ToList();
     }
+
+    /// <summary>
+    /// Lists all cars and their total rental frequency.
+    /// </summary>
     public List<CarWithRentalCountDto> ReadAllCarsWithRentalCount()
     {
         var allRents = rentRepository.ReadAll();
@@ -61,6 +79,10 @@ public class AnalyticsService(
             ))
             .ToList();
     }
+
+    /// <summary>
+    /// Identifies the top 5 clients by total revenue generated.
+    /// </summary>
     public List<ClientWithTotalAmountDto> ReadTop5ClientsByTotalAmount()
     {
         return rentRepository.ReadAll()

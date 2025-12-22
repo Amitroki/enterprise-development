@@ -1,16 +1,33 @@
 namespace CarRental.Domain.Interfaces;
 
+/// <summary>
+/// Provides a base implementation for in-memory CRUD operations.
+/// </summary>
+/// <typeparam name="TEntity">The type of the entity managed by the repository.</typeparam>
 public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
 	where TEntity : class
 {
+    /// <summary>
+    /// Private field for obtaining a unique identifier 
+    /// to assign it to the next entity in the repository
+    /// <summary>
+
     private uint _nextId;
 
+    private readonly List<TEntity> _entities;
+    /// <summary>
+    /// Gets the unique identifier from the entity.
+    /// </summary>
     protected abstract uint GetEntityId(TEntity entity);
 
+    /// <summary>
+    /// Sets the unique identifier for the entity
+    /// </summary>
     protected abstract void SetEntityId(TEntity entity, uint id);
 
-    private readonly List<TEntity> _entities;
-
+    /// <summary>
+    /// Initializes the repository and determines the starting ID based on existing data.
+    /// </summary>
     protected BaseRepository(List<TEntity>? entities = null)
     {
         _entities = entities ?? new List<TEntity>();
@@ -24,6 +41,9 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
         }
     }
 
+    /// <summary>
+    /// Adds a new entity to the collection and assigns a unique ID.
+    /// </summary>
     public virtual uint Create(TEntity entity)
     {
         if (entity == null)
@@ -37,16 +57,25 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
         return currentId;
     }
 
+    /// <summary>
+    /// Retrieves an entity by its unique identifier.
+    /// </summary>
     public virtual TEntity? Read(uint id)
     {
         return _entities.FirstOrDefault(e => GetEntityId(e) == id);
     }
 
+    /// <summary>
+    /// Returns all entities in the collection.
+    /// </summary>
     public virtual List<TEntity> ReadAll()
     {
        return _entities.ToList();
     }
 
+    /// <summary>
+    /// Replaces an existing entity at the specified ID.
+    /// </summary>
     public virtual bool Update(TEntity entity, uint id)
     {
         var existing = Read(id);
@@ -60,6 +89,9 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
         return false;
     }
 
+    /// <summary>
+    /// Removes an entity from the collection by its ID.
+    /// </summary>
     public virtual bool Delete(uint id)
     {
         var entity = Read(id);

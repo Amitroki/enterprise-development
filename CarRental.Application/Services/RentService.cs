@@ -5,12 +5,19 @@ using CarRental.Domain.Interfaces;
 using Mapster;
 
 namespace CarRental.Application.Services;
+
+/// <summary>
+/// Managing associations between cars, clients, and rental periods.
+/// </summary>
 public class RentService(
     IBaseRepository<Rent> repository,
     IBaseRepository<Car> carRepository,
     IBaseRepository<Client> clientRepository)
     : IApplicationService<RentDto, RentCreateUpdateDto>
 {
+    /// <summary>
+    /// Retrieves all rental records, performing safety checks for deleted clients to ensure data integrity during mapping.
+    /// </summary>
     public List<RentDto> ReadAll()
     {
         var rents = repository.ReadAll();
@@ -24,9 +31,16 @@ public class RentService(
         return rents.Select(r => r.Adapt<RentDto>()).ToList();
     }
 
+    /// <summary>
+    /// Retrieves a specific rental agreement by its identifier.
+    /// </summary>
     public RentDto? Read(uint id) =>
         repository.Read(id)?.Adapt<RentDto>();
 
+    /// <summary>
+    /// Creates a new rental agreement after validating that both the requested car and client exist.
+    /// </summary>
+    /// <returns>The created rental DTO, or null if validation fails.</returns>
     public RentDto? Create(RentCreateUpdateDto dto)
     {
         var car = carRepository.Read(dto.CarId);
@@ -45,6 +59,9 @@ public class RentService(
         return savedEntity!.Adapt<RentDto>();
     }
 
+    /// <summary>
+    /// Updates an existing rental agreement's details.
+    /// </summary>
     public bool Update(RentCreateUpdateDto dto, uint id)
     {
         var existing = repository.Read(id);
@@ -53,5 +70,8 @@ public class RentService(
         return repository.Update(existing, id);
     }
 
+    /// <summary>
+    /// Permanently removes a rental record from the system.
+    /// </summary>
     public bool Delete(uint id) => repository.Delete(id);
 }

@@ -6,14 +6,26 @@ using CarRental.Domain.Interfaces;
 
 namespace CarRental.Application.Services;
 
+/// <summary>
+/// Manages client-related operations, including registration and profile management.
+/// </summary>
 public class ClientService(IBaseRepository<Client> repository) : IApplicationService<ClientDto, ClientCreateUpdateDto>
 {
+    /// <summary>
+    /// Retrieves a complete list of registered clients.
+    /// </summary>
     public List<ClientDto> ReadAll() =>
         repository.ReadAll().Select(e => e.Adapt<ClientDto>()).ToList();
 
+    /// <summary>
+    /// Finds a specific client by their unique identifier.
+    /// </summary>
     public ClientDto? Read(uint id) =>
         repository.Read(id)?.Adapt<ClientDto>();
 
+    /// <summary>
+    /// Registers a new client in the system.
+    /// </summary>
     public ClientDto Create(ClientCreateUpdateDto dto)
     {
         var entity = dto.Adapt<Client>();
@@ -22,6 +34,9 @@ public class ClientService(IBaseRepository<Client> repository) : IApplicationSer
         return savedEntity!.Adapt<ClientDto>();
     }
 
+    /// <summary>
+    /// Updates an existing client's personal and contact information.
+    /// </summary>
     public bool Update(ClientCreateUpdateDto dto, uint id)
     {
         var existing = repository.Read(id);
@@ -30,5 +45,8 @@ public class ClientService(IBaseRepository<Client> repository) : IApplicationSer
         return repository.Update(existing, id);
     }
 
+    /// <summary>
+    /// Removes a client record from the database.
+    /// </summary>
     public bool Delete(uint id) => repository.Delete(id);
 }
