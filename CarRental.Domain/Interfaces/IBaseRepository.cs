@@ -3,9 +3,9 @@ namespace CarRental.Domain.Interfaces;
 public interface IBaseRepository<TEntity>
     where TEntity : class
 {
-    uint Create(TEntity entity);
-    TEntity? Read(uint id);
-    List<TEntity> ReadAll();
-    void Update(TEntity entity, uint id);
-    bool Delete(uint id);
+    public uint Create(TEntity entity);
+    public TEntity? Read(uint id);
+    public List<TEntity> ReadAll();
+    public bool Update(TEntity entity, uint id);
+    public bool Delete(uint id);
 }

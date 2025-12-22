@@ -30,7 +30,7 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
         {
             throw new ArgumentNullException(nameof(entity));
         }
-        uint currentId = _nextId;
+        var currentId = _nextId;
         SetEntityId(entity, currentId);
         _entities.Add(entity);
         _nextId++;
@@ -47,7 +47,7 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
        return _entities.ToList();
     }
 
-    public virtual void Update(TEntity entity, uint id)
+    public virtual bool Update(TEntity entity, uint id)
     {
         var existing = Read(id);
         if (existing != null)
@@ -55,7 +55,9 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
             var index = _entities.IndexOf(existing);
             SetEntityId(entity, id);
             _entities[index] = entity;
+            return true;
         }
+        return false;
     }
 
     public virtual bool Delete(uint id)

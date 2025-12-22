@@ -10,7 +10,7 @@ public interface IApplicationService<TDto, TCreateUpdateDto>
 
     public List<TDto> ReadAll();
 
-    public TDto Update(TCreateUpdateDto dto, uint id);
+    public bool Update(TCreateUpdateDto dto, uint id);
 
     public bool Delete(uint id);
 }
