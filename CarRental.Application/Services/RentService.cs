@@ -2,7 +2,6 @@ using CarRental.Application.Contracts.Rent;
 using CarRental.Application.Interfaces;
 using CarRental.Domain.DataModels;
 using CarRental.Domain.Interfaces;
-using CarRental.Infrastructure.InMemoryRepository;
 using Mapster;
 
 namespace CarRental.Application.Services;
@@ -17,9 +16,9 @@ public class RentService(
         var rents = repository.ReadAll();
         foreach (var rent in rents)
         {
-            if (clientRepository.Read(rent.Client.Id) == null)
+            if (clientRepository.Read(rent.Client!.Id) == null)
             {
-                rent.Client = null;
+                rent.Client = null!;
             }
         }
         return rents.Select(r => r.Adapt<RentDto>()).ToList();

@@ -27,6 +27,8 @@ builder.Services.AddScoped<IApplicationService<CarDto, CarCreateUpdateDto>, CarS
 builder.Services.AddScoped<IApplicationService<ClientDto, ClientCreateUpdateDto>, ClientService>();
 builder.Services.AddScoped<IApplicationService<RentDto, RentCreateUpdateDto>, RentService>();
 
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+
 MappingConfig.Configure();
 
 builder.Services.AddControllers()
