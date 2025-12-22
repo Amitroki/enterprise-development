@@ -8,20 +8,23 @@ using CarRental.Domain.DataModels;
 using CarRental.Domain.Interfaces;
 using CarRental.Domain.InternalData.ComponentClasses;
 using CarRental.Infrastructure.InMemoryRepository;
+using CarRental.ServiceDefaults;
 using Mapster;
 using MapsterMapper;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddMongoDBClient("CarRentalDb");
+builder.AddServiceDefaults();
 
 builder.Services.AddSingleton(TypeAdapterConfig.GlobalSettings);
 builder.Services.AddScoped<IMapper, ServiceMapper>();
 
-builder.Services.AddSingleton<CarRental.Domain.DataSeed.DataSeed>();
-builder.Services.AddSingleton<IBaseRepository<CarModel>, CarModelRepository>();
-builder.Services.AddSingleton<IBaseRepository<CarModelGeneration>, CarModelGenerationRepository>();
-builder.Services.AddSingleton<IBaseRepository<Car>, CarRepository>();
-builder.Services.AddSingleton<IBaseRepository<Client>, ClientRepository>();
-builder.Services.AddSingleton<IBaseRepository<Rent>, RentRepository>();
+builder.Services.AddScoped<CarRental.Domain.DataSeed.DataSeed>();
+builder.Services.AddScoped<IBaseRepository<CarModel>, CarModelRepository>();
+builder.Services.AddScoped<IBaseRepository<CarModelGeneration>, CarModelGenerationRepository>();
+builder.Services.AddScoped<IBaseRepository<Car>, CarRepository>();
+builder.Services.AddScoped<IBaseRepository<Client>, ClientRepository>();
+builder.Services.AddScoped<IBaseRepository<Rent>, RentRepository>();
 
 builder.Services.AddScoped<IApplicationService<CarDto, CarCreateUpdateDto>, CarService>();
 builder.Services.AddScoped<IApplicationService<ClientDto, ClientCreateUpdateDto>, ClientService>();
