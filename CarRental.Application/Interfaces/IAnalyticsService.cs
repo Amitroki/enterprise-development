@@ -1,6 +1,5 @@
-using CarRental.Application.Contracts.Car;
 using CarRental.Application.Contracts.Client;
-using CarRental.Application.Contracts;
+using CarRental.Application.Contracts.Analytics;
 
 namespace CarRental.Application.Interfaces;
 

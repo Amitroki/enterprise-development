@@ -9,23 +9,57 @@ namespace CarRental.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class RentController(IApplicationService<RentDto, RentCreateUpdateDto> rentService) : ControllerBase
+public class RentController(IApplicationService<RentDto, RentCreateUpdateDto> rentService, ILogger<RentController> logger) : ControllerBase
 {
     /// <summary>
     /// Retrieves a list of all rental records, including calculated costs and linked entity names
     /// </summary>
     [HttpGet]
-    public ActionResult<List<RentDto>> GetAll() => Ok(rentService.ReadAll());
+    [ProducesResponseType(200)]
+    [ProducesResponseType(500)]
+    public ActionResult<List<RentDto>> GetAll()
+    {
+        logger.LogInformation("{method} method of {controller} is called", nameof(GetAll), GetType().Name);
+        try
+        {
+            var result = rentService.ReadAll();
+            logger.LogInformation("{method} method of {controller} executed successfully", nameof(GetAll), GetType().Name);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(GetAll), GetType().Name);
+            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+        }
+    }
 
     /// <summary>
     /// Retrieves a specific rental agreement by its identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the rental record.</param>
     [HttpGet("{id}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(500)]
     public ActionResult<RentDto> Get(uint id)
     {
-        var rent = rentService.Read(id);
-        return rent != null ? Ok(rent) : NotFound();
+        logger.LogInformation("{method} method of {controller} is called with {id} parameter", nameof(Get), GetType().Name, id);
+        try
+        {
+            var rent = rentService.Read(id);
+            logger.LogInformation("{method} method of {controller} executed successfully", nameof(Get), GetType().Name);
+            return Ok(rent);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Get), GetType().Name);
+            return StatusCode(404, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Get), GetType().Name);
+            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+        }
     }
 
     /// <summary>
@@ -33,14 +67,22 @@ public class RentController(IApplicationService<RentDto, RentCreateUpdateDto> re
     /// </summary>
     /// <param name="dto">The rental details, including CarId and ClientId.</param>
     [HttpPost]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(500)]
     public ActionResult<RentDto> Create(RentCreateUpdateDto dto)
     {
-        var result = rentService.Create(dto);
-        if (result == null)
+        logger.LogInformation("{method} method of {controller} is called with {@dto} parameter", nameof(Create), GetType().Name, dto);
+        try
         {
-            return BadRequest("Client or car is not exist");
+            var createdRent = rentService.Create(dto);
+            logger.LogInformation("{method} method of {controller} executed successfully", nameof(Create), GetType().Name);
+            return CreatedAtAction(nameof(this.Create), createdRent);
         }
-        return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Create), GetType().Name);
+            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+        }
     }
 
     /// <summary>
@@ -49,9 +91,22 @@ public class RentController(IApplicationService<RentDto, RentCreateUpdateDto> re
     /// <param name="id">The ID of the rental to update.</param>
     /// <param name="dto">The updated rental data.</param>
     [HttpPut("{id}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(500)]
     public ActionResult Update(uint id, RentCreateUpdateDto dto)
     {
-        return rentService.Update(dto, id) ? NoContent() : NotFound();
+        logger.LogInformation("{method} method of {controller} is called with {key},{@dto} parameters", nameof(Update), GetType().Name, id, dto);
+        try
+        {
+            var updatedRent = rentService.Update(dto, id);
+            logger.LogInformation("{method} method of {controller} executed successfully", nameof(Update), GetType().Name);
+            return Ok(updatedRent);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Update), GetType().Name);
+            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+        }
     }
 
     /// <summary>
@@ -59,8 +114,22 @@ public class RentController(IApplicationService<RentDto, RentCreateUpdateDto> re
     /// </summary>
     /// <param name="id">The unique identifier of the rental to remove.</param>
     [HttpDelete("{id}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(500)]
     public ActionResult Delete(uint id)
     {
-        return rentService.Delete(id) ? NoContent() : NotFound();
+        logger.LogInformation("{method} method of {controller} is called with {id} parameter", nameof(Delete), GetType().Name, id);
+        try
+        {
+            var result = rentService.Delete(id);
+            logger.LogInformation("{method} method of {controller} executed successfully", nameof(Delete), GetType().Name);
+            return result ? Ok() : NoContent();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Delete), GetType().Name);
+            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+        }
     }
 }

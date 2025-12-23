@@ -1,7 +1,5 @@
-﻿using CarRental.Application.Contracts;
-using CarRental.Application.Contracts.Car;
+﻿using CarRental.Application.Contracts.Analytics;
 using CarRental.Application.Contracts.Client;
-using CarRental.Application.Contracts.Rent;
 using CarRental.Application.Interfaces;
 using CarRental.Domain.DataModels;
 using CarRental.Domain.Interfaces;

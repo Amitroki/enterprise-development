@@ -9,16 +9,28 @@ namespace CarRental.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class CarsController(IApplicationService<CarDto, CarCreateUpdateDto> carService) : ControllerBase
+public class CarController(IApplicationService<CarDto, CarCreateUpdateDto> carService, ILogger<CarController> logger) : ControllerBase
 {
     /// <summary>
     /// Retrieves a list of all cars available in the system
     /// </summary>
     [HttpGet]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(500)]
     public ActionResult<List<CarDto>> GetAll()
     {
-        var cars = carService.ReadAll();
-        return Ok(cars);
+        logger.LogInformation("{method} method of {controller} is called", nameof(GetAll), GetType().Name);
+        try
+        {
+            var cars = carService.ReadAll();
+            logger.LogInformation("{method} method of {controller} executed successfully", nameof(GetAll), GetType().Name);
+            return Ok(cars);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(GetAll), GetType().Name);
+            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+        }
     }
 
     /// <summary>
@@ -26,14 +38,28 @@ public class CarsController(IApplicationService<CarDto, CarCreateUpdateDto> carS
     /// </summary>
     /// <param name="id">The unique identifier of the car</param>
     [HttpGet("{id}")]
-    public ActionResult<CarDto> GetById(uint id)
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(500)]
+    public ActionResult<CarDto> Get(uint id)
     {
-        var car = carService.Read(id);
-        if (car == null)
+        logger.LogInformation("{method} method of {controller} is called with {id} parameter", nameof(Get), GetType().Name, id);
+        try
         {
-            return NotFound($"Машина с ID {id} не найдена.");
+            var car = carService.Read(id);
+            logger.LogInformation("{method} method of {controller} executed successfully", nameof(Get), GetType().Name);
+            return Ok(car);
         }
-        return Ok(car);
+        catch (KeyNotFoundException ex)
+        {
+            logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Get), GetType().Name);
+            return StatusCode(404, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Get), GetType().Name);
+            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+        }
     }
 
     /// <summary>
@@ -41,16 +67,21 @@ public class CarsController(IApplicationService<CarDto, CarCreateUpdateDto> carS
     /// </summary>
     /// <param name="dto">The data for the new car record</param>
     [HttpPost]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(500)]
     public ActionResult<CarDto> Create([FromBody] CarCreateUpdateDto dto)
     {
+        logger.LogInformation("{method} method of {controller} is called with {@dto} parameter", nameof(Create), GetType().Name, dto);
         try
         {
             var createdCar = carService.Create(dto);
-            return CreatedAtAction(nameof(GetById), new { id = createdCar.Id }, createdCar);
+            logger.LogInformation("{method} method of {controller} executed successfully", nameof(Create), GetType().Name);
+            return CreatedAtAction(nameof(this.Create), createdCar);
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Create), GetType().Name);
+            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
         }
     }
 
@@ -60,16 +91,21 @@ public class CarsController(IApplicationService<CarDto, CarCreateUpdateDto> carS
     /// <param name="id">The unique identifier of the car to update</param>
     /// <param name="dto">The updated data</param>
     [HttpPut("{id}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(500)]
     public ActionResult<CarDto> Update(uint id, [FromBody] CarCreateUpdateDto dto)
     {
+        logger.LogInformation("{method} method of {controller} is called with {key},{@dto} parameters", nameof(Update), GetType().Name, id, dto);
         try
         {
             var updatedCar = carService.Update(dto, id);
+            logger.LogInformation("{method} method of {controller} executed successfully", nameof(Update), GetType().Name);
             return Ok(updatedCar);
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Update), GetType().Name);
+            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
         }
     }
 
@@ -78,13 +114,22 @@ public class CarsController(IApplicationService<CarDto, CarCreateUpdateDto> carS
     /// </summary>
     /// <param name="id">The unique identifier of the car to delete</param>
     [HttpDelete("{id}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(500)]
     public ActionResult Delete(uint id)
     {
-        var result = carService.Delete(id);
-        if (!result)
+        logger.LogInformation("{method} method of {controller} is called with {id} parameter", nameof(Delete), GetType().Name, id);
+        try
         {
-            return NotFound($"Не удалось удалить машину с ID {id}.");
+            var result = carService.Delete(id);
+            logger.LogInformation("{method} method of {controller} executed successfully", nameof(Delete), GetType().Name);
+            return result ? Ok() : NoContent();
         }
-        return NoContent();
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Delete), GetType().Name);
+            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+        }
     }
 }
