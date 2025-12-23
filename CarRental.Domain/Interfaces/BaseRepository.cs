@@ -101,6 +101,4 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
         }
         return false;
     }
-
-
 }
