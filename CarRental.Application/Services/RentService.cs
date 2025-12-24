@@ -41,13 +41,13 @@ public class RentService(
     /// Creates a new rental agreement after validating that both the requested car and client exist.
     /// </summary>
     /// <returns>The created rental DTO, or null if validation fails.</returns>
-    public RentDto? Create(RentCreateUpdateDto dto)
+    public RentDto Create(RentCreateUpdateDto dto)
     {
         var car = carRepository.Read(dto.CarId);
         var client = clientRepository.Read(dto.ClientId);
         if (car == null || client == null)
         {
-            return null;
+            throw new Exception("Car or client is not found");
         }
         var entity = dto.Adapt<Rent>();
         entity.Car = car;
