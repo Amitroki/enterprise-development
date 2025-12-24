@@ -7,8 +7,11 @@ using CarRental.Application.Services;
 using CarRental.Domain.DataModels;
 using CarRental.Domain.Interfaces;
 using CarRental.Domain.InternalData.ComponentClasses;
+using CarRental.Infrastructure;
 using CarRental.Infrastructure.InMemoryRepository;
 using CarRental.ServiceDefaults;
+using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using Mapster;
 using MapsterMapper;
 
@@ -53,6 +56,12 @@ builder.Services.AddSwaggerGen(c =>
         if (File.Exists(xmlPath))
             c.IncludeXmlComments(xmlPath);
     }
+});
+
+builder.Services.AddDbContext<CarRentalDbContext>((serviceProvider, options) =>
+{
+    var client = serviceProvider.GetRequiredService<IMongoClient>();
+    options.UseMongoDB(client, "CarRentalDb");
 });
 
 var app = builder.Build();
