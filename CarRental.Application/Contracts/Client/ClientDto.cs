@@ -9,4 +9,4 @@ namespace CarRental.Application.Contracts.Client;
 /// <param name="FirstName">The client's first name.</param>
 /// <param name="Patronymic">The client's middle name (optional).</param>
 /// <param name="BirthDate">The client's date of birth (optional).</param>
-public record ClientDto(uint Id, string DriverLicenseId, string LastName, string FirstName, string? Patronymic, DateOnly? BirthDate);
+public record ClientDto(int Id, string DriverLicenseId, string LastName, string FirstName, string? Patronymic, DateOnly? BirthDate);

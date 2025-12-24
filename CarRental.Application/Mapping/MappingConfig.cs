@@ -1,11 +1,8 @@
 using Mapster;
 using CarRental.Domain.DataModels;
-using CarRental.Domain.InternalData.ComponentClasses;
 using CarRental.Application.Contracts.Car;
 using CarRental.Application.Contracts.Client;
 using CarRental.Application.Contracts.Rent;
-using CarRental.Application.Contracts.CarModel;
-using CarRental.Application.Contracts.CarModelGeneration;
 
 namespace CarRental.Application.Mapping;
 

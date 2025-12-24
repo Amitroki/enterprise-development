@@ -17,9 +17,9 @@ public class AnalyticsService(
     /// <summary>
     /// Finds unique clients who rented cars of a specific model name.
     /// </summary>
-    public List<ClientDto> ReadClientsByModelName(string modelName)
+    public async Task<List<ClientDto>> ReadClientsByModelName(string modelName)
     {
-        return rentRepository.ReadAll()
+        return await rentRepository.ReadAll()
             .Where(r => r.Car.ModelGeneration!.Model!.Name.Contains(modelName, StringComparison.OrdinalIgnoreCase))
             .Select(r => r.Client.Adapt<ClientDto>())
             .DistinctBy(c => c.Id)
@@ -29,7 +29,7 @@ public class AnalyticsService(
     /// <summary>
     /// Identifies the top 5 most frequently rented cars.
     /// </summary>
-    public List<CarWithRentalCountDto> ReadTop5MostRentedCars()
+    public Task<List<CarWithRentalCountDto>> ReadTop5MostRentedCars()
     {
         return rentRepository.ReadAll()
             .GroupBy(r => r.Car.Id)
@@ -47,7 +47,7 @@ public class AnalyticsService(
     /// <summary>
     /// Retrieves cars that were actively rented at a specific point in time.
     /// </summary>
-    public List<CarInRentDto> ReadCarsInRent(DateTime atTime)
+    public Task<List<CarInRentDto>> ReadCarsInRent(DateTime atTime)
     {
         return rentRepository.ReadAll()
             .Where(r => r.StartDateTime <= atTime && r.StartDateTime.AddHours(r.Duration) >= atTime)
@@ -64,7 +64,7 @@ public class AnalyticsService(
     /// <summary>
     /// Lists all cars and their total rental frequency.
     /// </summary>
-    public List<CarWithRentalCountDto> ReadAllCarsWithRentalCount()
+    public Task<List<CarWithRentalCountDto>> ReadAllCarsWithRentalCount()
     {
         var allRents = rentRepository.ReadAll();
 
@@ -81,7 +81,7 @@ public class AnalyticsService(
     /// <summary>
     /// Identifies the top 5 clients by total revenue generated.
     /// </summary>
-    public List<ClientWithTotalAmountDto> ReadTop5ClientsByTotalAmount()
+    public Task<List<ClientWithTotalAmountDto>> ReadTop5ClientsByTotalAmount()
     {
         return rentRepository.ReadAll()
             .GroupBy(r => r.Client.Id)

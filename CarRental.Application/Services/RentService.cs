@@ -34,7 +34,7 @@ public class RentService(
     /// <summary>
     /// Retrieves a specific rental agreement by its identifier.
     /// </summary>
-    public RentDto? Read(uint id) =>
+    public RentDto? Read(int id) =>
         repository.Read(id)?.Adapt<RentDto>();
 
     /// <summary>
@@ -62,7 +62,7 @@ public class RentService(
     /// <summary>
     /// Updates an existing rental agreement's details.
     /// </summary>
-    public bool Update(RentCreateUpdateDto dto, uint id)
+    public bool Update(RentCreateUpdateDto dto, int id)
     {
         var existing = repository.Read(id);
         if (existing is null) return false;
@@ -73,5 +73,5 @@ public class RentService(
     /// <summary>
     /// Permanently removes a rental record from the system.
     /// </summary>
-    public bool Delete(uint id) => repository.Delete(id);
+    public bool Delete(int id) => repository.Delete(id);
 }

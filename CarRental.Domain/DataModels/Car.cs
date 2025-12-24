@@ -10,7 +10,7 @@ public class Car
     /// <summary>
     /// Unique identifier of the car
     /// </summary>
-    public required uint Id { get; set; }
+    public required int Id { get; set; }
 
     /// <summary>
     /// The model generation this car belongs to, defining its year, transmission type, and base rental cost

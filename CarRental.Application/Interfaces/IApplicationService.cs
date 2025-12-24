@@ -12,25 +12,25 @@ public interface IApplicationService<TDto, TCreateUpdateDto>
     /// <summary>
     /// Creates a new record from the provided input DTO and returns the resulting output DTO.
     /// </summary>
-    public TDto Create(TCreateUpdateDto dto);
+    public Task<TDto> Create(TCreateUpdateDto dto);
 
     /// <summary>
     /// Retrieves a single record by its unique identifier, mapped to an output DTO.
     /// </summary>
-    public TDto? Read(uint id);
+    public Task<TDto?> Read(int id);
 
     /// <summary>
     /// Retrieves all records mapped to a list of output DTOs.
     /// </summary>
-    public List<TDto> ReadAll();
+    public Task<List<TDto>> ReadAll();
 
     /// <summary>
     /// Updates an existing record identified by the given ID using the input DTO data.
     /// </summary>
-    public bool Update(TCreateUpdateDto dto, uint id);
+    public Task<bool> Update(TCreateUpdateDto dto, int id);
 
     /// <summary>
     /// Removes a record from the system by its unique identifier.
     /// </summary>
-    public bool Delete(uint id);
+    public Task<bool> Delete(int id);
 }

@@ -7,4 +7,4 @@ namespace CarRental.Application.Contracts.CarModelGeneration;
 /// <param name="TransmissionType">The type of transmission (e.g., Manual, Automatic).</param>
 /// <param name="HourCost">The rental cost per hour for this generation.</param>
 /// <param name="ModelId">The unique identifier of the parent car model.</param>
-public record CarModelGenerationCreateUpdateDto(int Year, string? TransmissionType, decimal HourCost, uint ModelId);
+public record CarModelGenerationCreateUpdateDto(int Year, string? TransmissionType, decimal HourCost, int ModelId);

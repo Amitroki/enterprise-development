@@ -8,4 +8,4 @@ namespace CarRental.Application.Contracts.CarModelGeneration;
 /// <param name="TransmissionType">The type of transmission used in this generation.</param>
 /// <param name="HourCost">The rental cost per hour.</param>
 /// <param name="ModelId">The identifier of the parent car model.</param>
-public record CarModelGenerationDto(uint Id, int Year, string? TransmissionType, decimal HourCost, uint ModelId);
+public record CarModelGenerationDto(int Id, int Year, string? TransmissionType, decimal HourCost, int ModelId);

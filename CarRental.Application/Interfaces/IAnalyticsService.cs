@@ -11,25 +11,25 @@ public interface IAnalyticsService
     /// <summary>
     /// Retrieves all clients who have rented a specific car model.
     /// </summary>
-    public List<ClientDto> ReadClientsByModelName(string modelName);
+    public Task<List<ClientDto>> ReadClientsByModelName(string modelName);
 
     /// <summary>
     /// Lists all cars that are currently occupied at a specific point in time.
     /// </summary>
-    public List<CarInRentDto> ReadCarsInRent(DateTime atTime);
+    public Task<List<CarInRentDto>> ReadCarsInRent(DateTime atTime);
 
     /// <summary>
     /// Returns the top 5 cars with the highest number of rental agreements.
     /// </summary>
-    public List<CarWithRentalCountDto> ReadTop5MostRentedCars();
+    public Task<List<CarWithRentalCountDto>> ReadTop5MostRentedCars();
 
     /// <summary>
     /// Returns a list of all cars along with their total rental frequency.
     /// </summary>
-    public List<CarWithRentalCountDto> ReadAllCarsWithRentalCount();
+    public Task<List<CarWithRentalCountDto>> ReadAllCarsWithRentalCount();
 
     /// <summary>
     /// Returns the top 5 clients who have spent the most money on rentals.
     /// </summary>
-    public List<ClientWithTotalAmountDto> ReadTop5ClientsByTotalAmount();
+    public Task<List<ClientWithTotalAmountDto>> ReadTop5ClientsByTotalAmount();
 }

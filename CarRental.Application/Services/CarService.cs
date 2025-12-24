@@ -18,13 +18,13 @@ public class CarService(
     /// <summary>
     /// Retrieves all car records and maps them to DTOs.
     /// </summary>
-    public List<CarDto> ReadAll() =>
-        repository.ReadAll().Select(e => e.Adapt<CarDto>()).ToList();
+    public async  Task<List<CarDto>> ReadAll() =>
+        await repository.ReadAll().Select(e => e.Adapt<CarDto>()).ToList();
 
     /// <summary>
     /// Retrieves a specific car by its identifier.
     /// </summary>
-    public CarDto? Read(uint id) =>
+    public CarDto? Read(int id) =>
         repository.Read(id)?.Adapt<CarDto>();
 
     /// <summary>
@@ -49,7 +49,7 @@ public class CarService(
     /// <summary>
     /// Updates an existing car's information and its relationship with a model generation.
     /// </summary>
-    public bool Update(CarCreateUpdateDto dto, uint id)
+    public bool Update(CarCreateUpdateDto dto, int id)
     {
         var existing = repository.Read(id);
         if (existing is null) return false;
@@ -67,5 +67,5 @@ public class CarService(
     /// <summary>
     /// Deletes a car record by its identifier.
     /// </summary>
-    public bool Delete(uint id) => repository.Delete(id);
+    public bool Delete(int id) => repository.Delete(id);
 }

@@ -8,7 +8,7 @@ public class Rent
     /// <summary>
     /// Unique identifier of the rental record
     /// </summary>
-    public uint Id { get; set; }
+    public int Id { get; set; }
 
     /// <summary>
     /// Date and time when the rental period starts

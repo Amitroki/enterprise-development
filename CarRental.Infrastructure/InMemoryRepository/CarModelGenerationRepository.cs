@@ -13,10 +13,10 @@ public class CarModelGenerationRepository(DataSeed data) : BaseRepository<CarMod
     /// <summary>
     /// Gets the unique identifier from the specified CarModelGeneration entity
     /// </summary>
-    protected override uint GetEntityId(CarModelGeneration generation) => generation.Id;
+    protected override int GetEntityId(CarModelGeneration generation) => generation.Id;
 
     /// <summary>
     /// Sets the unique identifier for the specified CarModelGeneration entity
     /// </summary>
-    protected override void SetEntityId(CarModelGeneration generation, uint id) => generation.Id = id;
+    protected override void SetEntityId(CarModelGeneration generation, int id) => generation.Id = id;
 }

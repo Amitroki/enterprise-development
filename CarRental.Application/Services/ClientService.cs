@@ -20,7 +20,7 @@ public class ClientService(IBaseRepository<Client> repository) : IApplicationSer
     /// <summary>
     /// Finds a specific client by their unique identifier.
     /// </summary>
-    public ClientDto? Read(uint id) =>
+    public ClientDto? Read(int id) =>
         repository.Read(id)?.Adapt<ClientDto>();
 
     /// <summary>
@@ -37,7 +37,7 @@ public class ClientService(IBaseRepository<Client> repository) : IApplicationSer
     /// <summary>
     /// Updates an existing client's personal and contact information.
     /// </summary>
-    public bool Update(ClientCreateUpdateDto dto, uint id)
+    public bool Update(ClientCreateUpdateDto dto, int id)
     {
         var existing = repository.Read(id);
         if (existing is null) return false;
@@ -48,5 +48,5 @@ public class ClientService(IBaseRepository<Client> repository) : IApplicationSer
     /// <summary>
     /// Removes a client record from the database.
     /// </summary>
-    public bool Delete(uint id) => repository.Delete(id);
+    public bool Delete(int id) => repository.Delete(id);
 }

@@ -13,8 +13,8 @@ using Mapster;
 using MapsterMapper;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.AddMongoDBClient("CarRentalDb");
 builder.AddServiceDefaults();
+builder.AddMongoDBClient("CarRentalDb");
 
 builder.Services.AddSingleton(TypeAdapterConfig.GlobalSettings);
 builder.Services.AddScoped<IMapper, ServiceMapper>();

@@ -8,4 +8,4 @@ namespace CarRental.Application.Contracts.Analytics;
 /// <param name="NumberPlate">The vehicle's license plate number.</param>
 /// <param name="RentStartDate">The exact start time of the rental period.</param>
 /// <param name="DurationHours">The length of the rental in hours.</param>
-public record CarInRentDto(uint CarId, string ModelName, string NumberPlate, DateTime RentStartDate, int DurationHours);
+public record CarInRentDto(int CarId, string ModelName, string NumberPlate, DateTime RentStartDate, int DurationHours);

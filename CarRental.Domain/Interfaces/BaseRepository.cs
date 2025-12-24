@@ -12,18 +12,18 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
     /// to assign it to the next entity in the repository
     /// </summary>
 
-    private uint _nextId;
+    private int _nextId;
 
     private readonly List<TEntity> _entities;
     /// <summary>
     /// Gets the unique identifier from the entity.
     /// </summary>
-    protected abstract uint GetEntityId(TEntity entity);
+    protected abstract int GetEntityId(TEntity entity);
 
     /// <summary>
     /// Sets the unique identifier for the entity
     /// </summary>
-    protected abstract void SetEntityId(TEntity entity, uint id);
+    protected abstract void SetEntityId(TEntity entity, int id);
 
     /// <summary>
     /// Initializes the repository and determines the starting ID based on existing data.
@@ -44,7 +44,7 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
     /// <summary>
     /// Adds a new entity to the collection and assigns a unique ID.
     /// </summary>
-    public virtual uint Create(TEntity entity)
+    public virtual Task<int> Create(TEntity entity)
     {
         if (entity == null)
         {
@@ -54,31 +54,31 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
         SetEntityId(entity, currentId);
         _entities.Add(entity);
         _nextId++;
-        return currentId;
+        return Task.FromResult(currentId);
     }
 
     /// <summary>
     /// Retrieves an entity by its unique identifier.
     /// </summary>
-    public virtual TEntity? Read(uint id)
+    public virtual Task<TEntity?> Read(int id)
     {
-        return _entities.FirstOrDefault(e => GetEntityId(e) == id);
+        return Task.FromResult(_entities.FirstOrDefault(e => GetEntityId(e) == id));
     }
 
     /// <summary>
     /// Returns all entities in the collection.
     /// </summary>
-    public virtual List<TEntity> ReadAll()
+    public virtual Task<List<TEntity>> ReadAll()
     {
-       return _entities.ToList();
+       return Task.FromResult(_entities.ToList());
     }
 
     /// <summary>
     /// Replaces an existing entity at the specified ID.
     /// </summary>
-    public virtual bool Update(TEntity entity, uint id)
+    public virtual async Task<bool> Update(TEntity entity, int id)
     {
-        var existing = Read(id);
+        var existing = await Read(id);
         if (existing != null)
         {
             var index = _entities.IndexOf(existing);
@@ -92,9 +92,9 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
     /// <summary>
     /// Removes an entity from the collection by its ID.
     /// </summary>
-    public virtual bool Delete(uint id)
+    public virtual async Task<bool> Delete(int id)
     {
-        var entity = Read(id);
+        var entity = await Read(id);
         if (entity != null)
         {
             return _entities.Remove(entity);

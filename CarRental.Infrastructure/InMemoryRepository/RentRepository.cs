@@ -13,11 +13,10 @@ public class RentRepository(DataSeed data) : BaseRepository<Rent>(data.Rents)
     /// <summary>
     /// Gets the unique identifier from the specified Rent entity
     /// </summary>
-    protected override uint GetEntityId(Rent rent) => rent.Id;
+    protected override int GetEntityId(Rent rent) => rent.Id;
 
     /// <summary>
     /// Sets the unique identifier for the specified Rent entity
     /// </summary>
-    protected override void SetEntityId(Rent rent, uint id) => rent.Id = id;
-
+    protected override void SetEntityId(Rent rent, int id) => rent.Id = id;
 }

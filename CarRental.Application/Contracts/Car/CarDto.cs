@@ -7,4 +7,4 @@ namespace CarRental.Application.Contracts.Car;
 /// <param name="NumberPlate">The vehicle's license plate number.</param>
 /// <param name="Colour">The color of the car.</param>
 /// <param name="ModelName">The descriptive name of the car model.</param>
-public record CarDto(uint Id, string NumberPlate, string Colour, string ModelName);
+public record CarDto(int Id, string NumberPlate, string Colour, string ModelName);

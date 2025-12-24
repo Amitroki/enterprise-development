@@ -8,7 +8,7 @@ public class Client
     /// <summary>
     /// Unique identifier of the client
     /// </summary>
-    public required uint Id { get; set; }
+    public required int Id { get; set; }
 
     /// <summary>
     /// Unique identifier of the client's driver's license

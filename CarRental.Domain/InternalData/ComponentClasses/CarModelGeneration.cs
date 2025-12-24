@@ -13,7 +13,7 @@ public class CarModelGeneration
     /// <summary>
     /// Unique identifier of the car model generation
     /// </summary>
-    public required uint Id { get; set; }
+    public required int Id { get; set; }
 
     /// <summary>
     /// Calendar year when this generation of the car model was produced

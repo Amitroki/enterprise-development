@@ -12,7 +12,7 @@ public class CarModel
     /// <summary>
     /// Unique identifier of the car model
     /// </summary>
-    public required uint Id { get; set; }
+    public required int Id { get; set; }
 
     /// <summary>
     /// Name of the car model (e.g., "Camry", "Golf", "Model 3")
@@ -27,7 +27,7 @@ public class CarModel
     /// <summary>
     /// Number of passenger seats in the vehicle
     /// </summary>
-    public required uint SeatsNumber { get; set; }
+    public required int SeatsNumber { get; set; }
 
     /// <summary>
     /// Body style of the car model (e.g., sedan, SUV, hatchback)
