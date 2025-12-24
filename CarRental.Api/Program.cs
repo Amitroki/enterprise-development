@@ -19,6 +19,7 @@ builder.Services.AddScoped<IMapper, ServiceMapper>();
 builder.Services.AddSingleton<CarRental.Domain.DataSeed.DataSeed>();
 builder.Services.AddSingleton<IBaseRepository<CarModel>, CarModelRepository>();
 builder.Services.AddSingleton<IBaseRepository<CarModelGeneration>, CarModelGenerationRepository>();
+builder.Services.AddSingleton<IBaseRepository<CarModelGeneration>, CarModelGenerationRepository>();
 builder.Services.AddSingleton<IBaseRepository<Car>, CarRepository>();
 builder.Services.AddSingleton<IBaseRepository<Client>, ClientRepository>();
 builder.Services.AddSingleton<IBaseRepository<Rent>, RentRepository>();

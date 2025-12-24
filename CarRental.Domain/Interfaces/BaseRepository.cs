@@ -10,7 +10,7 @@ public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
     /// <summary>
     /// Private field for obtaining a unique identifier 
     /// to assign it to the next entity in the repository
-    /// <summary>
+    /// </summary>
 
     private uint _nextId;
 
