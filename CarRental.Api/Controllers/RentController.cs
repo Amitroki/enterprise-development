@@ -17,12 +17,12 @@ public class RentController(IApplicationService<RentDto, RentCreateUpdateDto> re
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
-    public ActionResult<List<RentDto>> GetAll()
+    public async Task<ActionResult<List<RentDto>>> GetAll()
     {
         logger.LogInformation("{method} method of {controller} is called", nameof(GetAll), GetType().Name);
         try
         {
-            var result = rentService.ReadAll();
+            var result = await rentService.ReadAll();
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(GetAll), GetType().Name);
             return Ok(result);
         }
@@ -41,12 +41,12 @@ public class RentController(IApplicationService<RentDto, RentCreateUpdateDto> re
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public ActionResult<RentDto> Get(uint id)
+    public async Task<ActionResult<RentDto>> Get(int id)
     {
         logger.LogInformation("{method} method of {controller} is called with {id} parameter", nameof(Get), GetType().Name, id);
         try
         {
-            var rent = rentService.Read(id);
+            var rent = await rentService.Read(id);
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(Get), GetType().Name);
             return Ok(rent);
         }
@@ -69,12 +69,12 @@ public class RentController(IApplicationService<RentDto, RentCreateUpdateDto> re
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(500)]
-    public ActionResult<RentDto> Create(RentCreateUpdateDto dto)
+    public async Task<ActionResult<RentDto>> Create(RentCreateUpdateDto dto)
     {
         logger.LogInformation("{method} method of {controller} is called with {@dto} parameter", nameof(Create), GetType().Name, dto);
         try
         {
-            var createdRent = rentService.Create(dto);
+            var createdRent = await rentService.Create(dto);
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(Create), GetType().Name);
             return CreatedAtAction(nameof(this.Create), createdRent);
         }
@@ -93,12 +93,12 @@ public class RentController(IApplicationService<RentDto, RentCreateUpdateDto> re
     [HttpPut("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
-    public ActionResult Update(uint id, RentCreateUpdateDto dto)
+    public async Task<ActionResult> Update(int id, RentCreateUpdateDto dto)
     {
         logger.LogInformation("{method} method of {controller} is called with {key},{@dto} parameters", nameof(Update), GetType().Name, id, dto);
         try
         {
-            var updatedRent = rentService.Update(dto, id);
+            var updatedRent = await rentService.Update(dto, id);
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(Update), GetType().Name);
             return Ok(updatedRent);
         }
@@ -117,12 +117,12 @@ public class RentController(IApplicationService<RentDto, RentCreateUpdateDto> re
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult Delete(uint id)
+    public async Task<ActionResult> Delete(int id)
     {
         logger.LogInformation("{method} method of {controller} is called with {id} parameter", nameof(Delete), GetType().Name, id);
         try
         {
-            var result = rentService.Delete(id);
+            var result = await rentService.Delete(id);
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(Delete), GetType().Name);
             return result ? Ok() : NoContent();
         }

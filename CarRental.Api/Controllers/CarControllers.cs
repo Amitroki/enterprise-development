@@ -17,12 +17,12 @@ public class CarController(IApplicationService<CarDto, CarCreateUpdateDto> carSe
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
-    public ActionResult<List<CarDto>> GetAll()
+    public async Task<ActionResult<List<CarDto>>> GetAll()
     {
         logger.LogInformation("{method} method of {controller} is called", nameof(GetAll), GetType().Name);
         try
         {
-            var cars = carService.ReadAll();
+            var cars = await carService.ReadAll();
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(GetAll), GetType().Name);
             return Ok(cars);
         }
@@ -41,12 +41,12 @@ public class CarController(IApplicationService<CarDto, CarCreateUpdateDto> carSe
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public ActionResult<CarDto> Get(uint id)
+    public async Task<ActionResult<CarDto>> Get(int id)
     {
         logger.LogInformation("{method} method of {controller} is called with {id} parameter", nameof(Get), GetType().Name, id);
         try
         {
-            var car = carService.Read(id);
+            var car = await carService.Read(id);
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(Get), GetType().Name);
             return Ok(car);
         }
@@ -69,12 +69,12 @@ public class CarController(IApplicationService<CarDto, CarCreateUpdateDto> carSe
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(500)]
-    public ActionResult<CarDto> Create([FromBody] CarCreateUpdateDto dto)
+    public async Task<ActionResult<CarDto>> Create([FromBody] CarCreateUpdateDto dto)
     {
         logger.LogInformation("{method} method of {controller} is called with {@dto} parameter", nameof(Create), GetType().Name, dto);
         try
         {
-            var createdCar = carService.Create(dto);
+            var createdCar = await carService.Create(dto);
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(Create), GetType().Name);
             return CreatedAtAction(nameof(this.Create), createdCar);
         }
@@ -93,12 +93,12 @@ public class CarController(IApplicationService<CarDto, CarCreateUpdateDto> carSe
     [HttpPut("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
-    public ActionResult<CarDto> Update(uint id, [FromBody] CarCreateUpdateDto dto)
+    public async Task<ActionResult<CarDto>> Update(int id, [FromBody] CarCreateUpdateDto dto)
     {
         logger.LogInformation("{method} method of {controller} is called with {key},{@dto} parameters", nameof(Update), GetType().Name, id, dto);
         try
         {
-            var updatedCar = carService.Update(dto, id);
+            var updatedCar = await carService.Update(dto, id);
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(Update), GetType().Name);
             return Ok(updatedCar);
         }
@@ -117,12 +117,12 @@ public class CarController(IApplicationService<CarDto, CarCreateUpdateDto> carSe
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult Delete(uint id)
+    public async Task<ActionResult> Delete(int id)
     {
         logger.LogInformation("{method} method of {controller} is called with {id} parameter", nameof(Delete), GetType().Name, id);
         try
         {
-            var result = carService.Delete(id);
+            var result = await carService.Delete(id);
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(Delete), GetType().Name);
             return result ? Ok() : NoContent();
         }

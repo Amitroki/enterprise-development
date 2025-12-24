@@ -19,8 +19,8 @@ public class AnalyticsService(
     /// </summary>
     public async Task<List<ClientDto>> ReadClientsByModelName(string modelName)
     {
-        return await rentRepository.ReadAll()
-            .Where(r => r.Car.ModelGeneration!.Model!.Name.Contains(modelName, StringComparison.OrdinalIgnoreCase))
+        var clients = await rentRepository.ReadAll();
+        return clients.Where(r => r.Car.ModelGeneration!.Model!.Name.Contains(modelName, StringComparison.OrdinalIgnoreCase))
             .Select(r => r.Client.Adapt<ClientDto>())
             .DistinctBy(c => c.Id)
             .ToList();
@@ -29,10 +29,10 @@ public class AnalyticsService(
     /// <summary>
     /// Identifies the top 5 most frequently rented cars.
     /// </summary>
-    public Task<List<CarWithRentalCountDto>> ReadTop5MostRentedCars()
+    public async Task<List<CarWithRentalCountDto>> ReadTop5MostRentedCars()
     {
-        return rentRepository.ReadAll()
-            .GroupBy(r => r.Car.Id)
+        var rents = await rentRepository.ReadAll();
+        return rents.GroupBy(r => r.Car.Id)
             .Select(g => new CarWithRentalCountDto(
                 g.First().Car.Id,
                 g.First().Car.ModelGeneration?.Model!.Name ?? "Unknown",
@@ -47,10 +47,10 @@ public class AnalyticsService(
     /// <summary>
     /// Retrieves cars that were actively rented at a specific point in time.
     /// </summary>
-    public Task<List<CarInRentDto>> ReadCarsInRent(DateTime atTime)
+    public async Task<List<CarInRentDto>> ReadCarsInRent(DateTime atTime)
     {
-        return rentRepository.ReadAll()
-            .Where(r => r.StartDateTime <= atTime && r.StartDateTime.AddHours(r.Duration) >= atTime)
+        var rents = await rentRepository.ReadAll();
+        return rents.Where(r => r.StartDateTime <= atTime && r.StartDateTime.AddHours(r.Duration) >= atTime)
             .Select(r => new CarInRentDto(
                 r.Car.Id,
                 r.Car.ModelGeneration?.Model!.Name ?? "Unknown",
@@ -64,27 +64,25 @@ public class AnalyticsService(
     /// <summary>
     /// Lists all cars and their total rental frequency.
     /// </summary>
-    public Task<List<CarWithRentalCountDto>> ReadAllCarsWithRentalCount()
+    public async Task<List<CarWithRentalCountDto>> ReadAllCarsWithRentalCount()
     {
-        var allRents = rentRepository.ReadAll();
-
-        return carRepository.ReadAll()
-            .Select(car => new CarWithRentalCountDto(
+        var allRents = await rentRepository.ReadAll();
+        var allCars = await carRepository.ReadAll();
+        return allCars.Select(car => new CarWithRentalCountDto(
                 car.Id,
                 car.ModelGeneration?.Model!.Name ?? "Unknown",
                 car.NumberPlate,
                 allRents.Count(r => r.Car.Id == car.Id)
-            ))
-            .ToList();
+            )).ToList();
     }
 
     /// <summary>
     /// Identifies the top 5 clients by total revenue generated.
     /// </summary>
-    public Task<List<ClientWithTotalAmountDto>> ReadTop5ClientsByTotalAmount()
+    public async Task<List<ClientWithTotalAmountDto>> ReadTop5ClientsByTotalAmount()
     {
-        return rentRepository.ReadAll()
-            .GroupBy(r => r.Client.Id)
+        var rents = await rentRepository.ReadAll();
+        return rents.GroupBy(r => r.Client.Id)
             .Select(g => {
                 var client = g.First().Client;
                 var totalAmount = g.Sum(r => (decimal)r.Duration * (r.Car.ModelGeneration?.HourCost ?? 0));

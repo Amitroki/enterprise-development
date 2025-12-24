@@ -20,12 +20,12 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<ClientDto>> GetClientsByModel([FromQuery] string modelName)
+    public async Task<ActionResult<List<ClientDto>>> GetClientsByModel([FromQuery] string modelName)
     {
         logger.LogInformation("{method} method of {controller} is called with {@string} parameter", nameof(GetClientsByModel), GetType().Name, modelName);
         try
         {
-            var result = analyticsService.ReadClientsByModelName(modelName);
+            var result = await analyticsService.ReadClientsByModelName(modelName);
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(GetClientsByModel), GetType().Name);
             return result != null ? Ok(result) : NoContent();
         }
@@ -44,12 +44,12 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<CarInRentDto>> GetCarsInRent([FromQuery] DateTime atTime)
+    public async Task<ActionResult<List<CarInRentDto>>> GetCarsInRent([FromQuery] DateTime atTime)
     {
         logger.LogInformation("{method} method of {controller} is called with {parameterName} = {parameterValue}", nameof(GetCarsInRent), GetType().Name, nameof(atTime), atTime);
         try
         {
-            var result = analyticsService.ReadCarsInRent(atTime);
+            var result = await analyticsService.ReadCarsInRent(atTime);
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(GetCarsInRent), GetType().Name);
             return result != null ? Ok(result) : NoContent();
         }
@@ -67,12 +67,12 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<CarWithRentalCountDto>> GetTop5Cars()
+    public async Task<ActionResult<List<CarWithRentalCountDto>>> GetTop5Cars()
     {
         logger.LogInformation("{method} method of {controller} is called", nameof(GetTop5Cars), GetType().Name);
         try
         {
-            var result = analyticsService.ReadTop5MostRentedCars();
+            var result = await analyticsService.ReadTop5MostRentedCars();
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(GetTop5Cars), GetType().Name);
             return result != null ? Ok(result) : NoContent();
         }
@@ -90,12 +90,12 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<CarWithRentalCountDto>> GetAllCarsWithCount()
+    public async Task<ActionResult<List<CarWithRentalCountDto>>> GetAllCarsWithCount()
     {
         logger.LogInformation("{method} method of {controller} is called", nameof(GetAllCarsWithCount), GetType().Name);
         try
         {
-            var result = analyticsService.ReadAllCarsWithRentalCount();
+            var result = await analyticsService.ReadAllCarsWithRentalCount();
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(GetAllCarsWithCount), GetType().Name);
             return result != null ? Ok(result) : NoContent();
         }
@@ -113,12 +113,12 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<ClientWithTotalAmountDto>> GetTop5Clients()
+    public async Task<ActionResult<List<ClientWithTotalAmountDto>>> GetTop5Clients()
     {
         logger.LogInformation("{method} method of {controller} is called", nameof(GetTop5Clients), GetType().Name);
         try
         {
-            var result = analyticsService.ReadTop5ClientsByTotalAmount();
+            var result = await analyticsService.ReadTop5ClientsByTotalAmount();
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(GetTop5Clients), GetType().Name);
             return result != null ? Ok(result) : NoContent();
         }

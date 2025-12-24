@@ -18,54 +18,60 @@ public class CarService(
     /// <summary>
     /// Retrieves all car records and maps them to DTOs.
     /// </summary>
-    public async  Task<List<CarDto>> ReadAll() =>
-        await repository.ReadAll().Select(e => e.Adapt<CarDto>()).ToList();
+    public async Task<List<CarDto>> ReadAll()
+    {
+        var rep = await repository.ReadAll();
+        return rep.Select(e => e.Adapt<CarDto>()).ToList();
+    } 
 
     /// <summary>
     /// Retrieves a specific car by its identifier.
     /// </summary>
-    public CarDto? Read(int id) =>
-        repository.Read(id)?.Adapt<CarDto>();
+    public async Task<CarDto?> Read(int id)
+    {
+        var rep = await repository.Read(id);
+        return rep.Adapt<CarDto>();
+    }
 
     /// <summary>
     /// Creates a new car record after validating the associated model generation.
     /// </summary>
     /// <exception cref="Exception">Thrown when the specified ModelGenerationId does not exist.</exception>
-    public CarDto Create(CarCreateUpdateDto dto)
+    public async Task<CarDto> Create(CarCreateUpdateDto dto)
     {
         var entity = dto.Adapt<Car>();
-        var fullGeneration = generationRepository.Read(dto.ModelGenerationId);
+        var fullGeneration = await generationRepository.Read(dto.ModelGenerationId);
 
         if (fullGeneration == null)
             throw new Exception("Generation not found");
         entity.ModelGeneration = fullGeneration;
-
-        var id = repository.Create(entity);
-        var savedEntity = repository.Read(id);
-
+        var id = await repository.Create(entity);
+        var savedEntity = await repository.Read(id);
         return savedEntity!.Adapt<CarDto>();
     }
 
     /// <summary>
     /// Updates an existing car's information and its relationship with a model generation.
     /// </summary>
-    public bool Update(CarCreateUpdateDto dto, int id)
+    public async Task<bool> Update(CarCreateUpdateDto dto, int id)
     {
-        var existing = repository.Read(id);
+        var existing = await repository.Read(id);
         if (existing is null) return false;
-
         dto.Adapt(existing);
-        var fullGeneration = generationRepository.Read(dto.ModelGenerationId);
+        var fullGeneration = await generationRepository.Read(dto.ModelGenerationId);
         if (fullGeneration != null)
         {
             existing.ModelGeneration = fullGeneration;
         }
-
-        return repository.Update(existing, id);
+        var res = await repository.Update(existing, id);
+        return res;
     }
 
     /// <summary>
     /// Deletes a car record by its identifier.
     /// </summary>
-    public bool Delete(int id) => repository.Delete(id);
+    public async Task<bool> Delete(int id) {
+        var rep = await repository.Delete(id);
+        return rep;
+    }
 }

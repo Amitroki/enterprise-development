@@ -17,12 +17,12 @@ public class ClientController(IApplicationService<ClientDto, ClientCreateUpdateD
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
-    public ActionResult<List<ClientDto>> GetAll()
+    public async Task<ActionResult<List<ClientDto>>> GetAll()
     {
         logger.LogInformation("{method} method of {controller} is called", nameof(GetAll), GetType().Name);
         try
         {
-            var result = clientService.ReadAll();
+            var result = await clientService.ReadAll();
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(GetAll), GetType().Name);
             return Ok(result);
         }
@@ -41,12 +41,12 @@ public class ClientController(IApplicationService<ClientDto, ClientCreateUpdateD
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public ActionResult<ClientDto> Get(uint id)
+    public async Task<ActionResult<ClientDto>> Get(int id)
     {
         logger.LogInformation("{method} method of {controller} is called with {id} parameter", nameof(Get), GetType().Name, id);
         try
         {
-            var client = clientService.Read(id);
+            var client = await clientService.Read(id);
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(Get), GetType().Name);
             return Ok(client);
         }
@@ -69,12 +69,12 @@ public class ClientController(IApplicationService<ClientDto, ClientCreateUpdateD
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(500)]
-    public ActionResult<ClientDto> Create(ClientCreateUpdateDto dto)
+    public async Task<ActionResult<ClientDto>> Create(ClientCreateUpdateDto dto)
     {
         logger.LogInformation("{method} method of {controller} is called with {@dto} parameter", nameof(Create), GetType().Name, dto);
         try
         {
-            var createdClient = clientService.Create(dto);
+            var createdClient = await clientService.Create(dto);
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(Create), GetType().Name);
             return CreatedAtAction(nameof(this.Create), createdClient);
         }
@@ -93,12 +93,12 @@ public class ClientController(IApplicationService<ClientDto, ClientCreateUpdateD
     [HttpPut("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
-    public ActionResult Update(uint id, ClientCreateUpdateDto dto)
+    public async Task<ActionResult> Update(int id, ClientCreateUpdateDto dto)
     {
         logger.LogInformation("{method} method of {controller} is called with {key},{@dto} parameters", nameof(Update), GetType().Name, id, dto);
         try
         {
-            var updatedClient = clientService.Update(dto, id);
+            var updatedClient = await clientService.Update(dto, id);
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(Update), GetType().Name);
             return Ok(updatedClient);
         }
@@ -117,12 +117,12 @@ public class ClientController(IApplicationService<ClientDto, ClientCreateUpdateD
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult Delete(uint id)
+    public async Task<ActionResult> Delete(int id)
     {
         logger.LogInformation("{method} method of {controller} is called with {id} parameter", nameof(Delete), GetType().Name, id);
         try
         {
-            var result = clientService.Delete(id);
+            var result = await clientService.Delete(id);
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(Delete), GetType().Name);
             return result ? Ok() : NoContent();
         }

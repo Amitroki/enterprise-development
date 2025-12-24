@@ -14,39 +14,48 @@ public class ClientService(IBaseRepository<Client> repository) : IApplicationSer
     /// <summary>
     /// Retrieves a complete list of registered clients.
     /// </summary>
-    public List<ClientDto> ReadAll() =>
-        repository.ReadAll().Select(e => e.Adapt<ClientDto>()).ToList();
+    public async Task<List<ClientDto>> ReadAll() {
+        var rep = await repository.ReadAll();
+        return rep.Select(e => e.Adapt<ClientDto>()).ToList();
+    }
 
     /// <summary>
     /// Finds a specific client by their unique identifier.
     /// </summary>
-    public ClientDto? Read(int id) =>
-        repository.Read(id)?.Adapt<ClientDto>();
+    public async Task<ClientDto?> Read(int id) {
+        var rep = await repository.Read(id);
+        return rep.Adapt<ClientDto>();
+    }
 
     /// <summary>
     /// Registers a new client in the system.
     /// </summary>
-    public ClientDto Create(ClientCreateUpdateDto dto)
+    public async Task<ClientDto> Create(ClientCreateUpdateDto dto)
     {
         var entity = dto.Adapt<Client>();
-        var id = repository.Create(entity);
-        var savedEntity = repository.Read(id);
+        var id = await repository.Create(entity);
+        var savedEntity = await repository.Read(id);
         return savedEntity!.Adapt<ClientDto>();
     }
 
     /// <summary>
     /// Updates an existing client's personal and contact information.
     /// </summary>
-    public bool Update(ClientCreateUpdateDto dto, int id)
+    public async Task<bool> Update(ClientCreateUpdateDto dto, int id)
     {
-        var existing = repository.Read(id);
+        var existing = await repository.Read(id);
         if (existing is null) return false;
         dto.Adapt(existing);
-        return repository.Update(existing, id);
+        var res = await repository.Update(existing, id);
+        return res;
     }
 
     /// <summary>
     /// Removes a client record from the database.
     /// </summary>
-    public bool Delete(int id) => repository.Delete(id);
+    public async Task<bool> Delete(int id)
+    {
+        var res = await repository.Delete(id);
+        return res;
+    }
 }

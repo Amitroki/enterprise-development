@@ -18,12 +18,13 @@ public class RentService(
     /// <summary>
     /// Retrieves all rental records, performing safety checks for deleted clients to ensure data integrity during mapping.
     /// </summary>
-    public List<RentDto> ReadAll()
+    public async Task<List<RentDto>> ReadAll()
     {
-        var rents = repository.ReadAll();
+        var rents = await repository.ReadAll();
         foreach (var rent in rents)
         {
-            if (clientRepository.Read(rent.Client!.Id) == null)
+            var rep = await clientRepository.Read(rent.Client!.Id);
+            if (rep == null)
             {
                 rent.Client = null!;
             }
@@ -34,17 +35,20 @@ public class RentService(
     /// <summary>
     /// Retrieves a specific rental agreement by its identifier.
     /// </summary>
-    public RentDto? Read(int id) =>
-        repository.Read(id)?.Adapt<RentDto>();
+    public async Task<RentDto?> Read(int id)
+    {
+        var rep = await repository.Read(id);
+        return rep.Adapt<RentDto>();
+    }
 
     /// <summary>
     /// Creates a new rental agreement after validating that both the requested car and client exist.
     /// </summary>
     /// <returns>The created rental DTO, or null if validation fails.</returns>
-    public RentDto Create(RentCreateUpdateDto dto)
+    public async Task<RentDto> Create(RentCreateUpdateDto dto)
     {
-        var car = carRepository.Read(dto.CarId);
-        var client = clientRepository.Read(dto.ClientId);
+        var car = await carRepository.Read(dto.CarId);
+        var client = await clientRepository.Read(dto.ClientId);
         if (car == null || client == null)
         {
             throw new Exception("Car or client is not found");
@@ -53,8 +57,8 @@ public class RentService(
         entity.Car = car;
         entity.Client = client;
 
-        var id = repository.Create(entity);
-        var savedEntity = repository.Read(id);
+        var id = await repository.Create(entity);
+        var savedEntity = await repository.Read(id);
 
         return savedEntity!.Adapt<RentDto>();
     }
@@ -62,16 +66,21 @@ public class RentService(
     /// <summary>
     /// Updates an existing rental agreement's details.
     /// </summary>
-    public bool Update(RentCreateUpdateDto dto, int id)
+    public async Task<bool> Update(RentCreateUpdateDto dto, int id)
     {
-        var existing = repository.Read(id);
+        var existing = await repository.Read(id);
         if (existing is null) return false;
         dto.Adapt(existing);
-        return repository.Update(existing, id);
+        var res = await repository.Update(existing, id);
+        return res;
     }
 
     /// <summary>
     /// Permanently removes a rental record from the system.
     /// </summary>
-    public bool Delete(int id) => repository.Delete(id);
+    public async Task<bool> Delete(int id)
+    {
+        var res = await repository.Delete(id);
+        return res;
+    }
 }
