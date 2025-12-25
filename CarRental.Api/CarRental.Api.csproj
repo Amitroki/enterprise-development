@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Aspire.MongoDB.Driver" Version="13.1.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.0.1" />
   </ItemGroup>
 
   <ItemGroup>

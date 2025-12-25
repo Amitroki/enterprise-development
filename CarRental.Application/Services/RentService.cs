@@ -1,86 +1,63 @@
+using AutoMapper;
 using CarRental.Application.Contracts.Rent;
 using CarRental.Application.Interfaces;
 using CarRental.Domain.DataModels;
 using CarRental.Domain.Interfaces;
-using Mapster;
 
 namespace CarRental.Application.Services;
 
-/// <summary>
-/// Managing associations between cars, clients, and rental periods.
-/// </summary>
 public class RentService(
     IBaseRepository<Rent> repository,
     IBaseRepository<Car> carRepository,
-    IBaseRepository<Client> clientRepository)
+    IBaseRepository<Client> clientRepository,
+    IMapper mapper)
     : IApplicationService<RentDto, RentCreateUpdateDto>
 {
-    /// <summary>
-    /// Retrieves all rental records, performing safety checks for deleted clients to ensure data integrity during mapping.
-    /// </summary>
     public async Task<List<RentDto>> ReadAll()
     {
         var rents = await repository.ReadAll();
-        foreach (var rent in rents)
-        {
-            var rep = await clientRepository.Read(rent.Client!.Id);
-            if (rep == null)
-            {
-                rent.Client = null!;
-            }
-        }
-        return rents.Select(r => r.Adapt<RentDto>()).ToList();
+        return mapper.Map<List<RentDto>>(rents);
     }
 
-    /// <summary>
-    /// Retrieves a specific rental agreement by its identifier.
-    /// </summary>
     public async Task<RentDto?> Read(int id)
     {
-        var rep = await repository.Read(id);
-        return rep.Adapt<RentDto>();
+        var entity = await repository.Read(id);
+        return entity == null ? null : mapper.Map<RentDto>(entity);
     }
 
-    /// <summary>
-    /// Creates a new rental agreement after validating that both the requested car and client exist.
-    /// </summary>
-    /// <returns>The created rental DTO, or null if validation fails.</returns>
     public async Task<RentDto> Create(RentCreateUpdateDto dto)
     {
         var car = await carRepository.Read(dto.CarId);
         var client = await clientRepository.Read(dto.ClientId);
+
         if (car == null || client == null)
-        {
             throw new Exception("Car or client is not found");
-        }
-        var entity = dto.Adapt<Rent>();
+
+        var entity = mapper.Map<Rent>(dto);
         entity.Car = car;
         entity.Client = client;
 
         var id = await repository.Create(entity);
         var savedEntity = await repository.Read(id);
 
-        return savedEntity!.Adapt<RentDto>();
+        return mapper.Map<RentDto>(savedEntity!);
     }
 
-    /// <summary>
-    /// Updates an existing rental agreement's details.
-    /// </summary>
     public async Task<bool> Update(RentCreateUpdateDto dto, int id)
     {
         var existing = await repository.Read(id);
         if (existing is null) return false;
-        dto.Adapt(existing);
-        var res = await repository.Update(existing, id);
-        return res;
+
+        mapper.Map(dto, existing);
+
+        var car = await carRepository.Read(dto.CarId);
+        var client = await clientRepository.Read(dto.ClientId);
+
+        if (car != null) existing.Car = car;
+        if (client != null) existing.Client = client;
+
+        return await repository.Update(existing, id);
     }
 
-    /// <summary>
-    /// Permanently removes a rental record from the system.
-    /// </summary>
-    public async Task<bool> Delete(int id)
-    {
-        var res = await repository.Delete(id);
-        return res;
-    }
+    public async Task<bool> Delete(int id) => await repository.Delete(id);
 }

@@ -5,7 +5,7 @@ using MongoDB.EntityFrameworkCore.Extensions;
 
 namespace CarRental.Infrastructure;
 
-public class CarRentalDbContext : DbContext
+public class CarRentalDbContext(DbContextOptions<CarRentalDbContext> options) : DbContext(options)
 {
     public DbSet<Car> Cars { get; init; }
     public DbSet<Client> Clients { get; init; }
@@ -13,46 +13,59 @@ public class CarRentalDbContext : DbContext
     public DbSet<CarModel> CarModels { get; init; }
     public DbSet<CarModelGeneration> ModelGenerations { get; init; }
 
-    public CarRentalDbContext(DbContextOptions<CarRentalDbContext> options)
-        : base(options)
-    {
-    }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Client>().ToCollection("clients");
-        modelBuilder.Entity<Car>().ToCollection("cars");
-        modelBuilder.Entity<Rent>().ToCollection("rents");
-        modelBuilder.Entity<CarModel>().ToCollection("car_models");
-        modelBuilder.Entity<CarModelGeneration>().ToCollection("model_generations");
+        // В MongoDB EF Core транзакции не поддерживаются в базовом режиме
+        Database.AutoTransactionBehavior = AutoTransactionBehavior.Never;
 
-        modelBuilder.Entity<Client>().HasKey(c => c.Id);
-        modelBuilder.Entity<Car>().HasKey(c => c.Id);
-        modelBuilder.Entity<Rent>().HasKey(r => r.Id);
-        modelBuilder.Entity<CarModel>().HasKey(m => m.Id);
-        modelBuilder.Entity<CarModelGeneration>().HasKey(g => g.Id);
-
-        modelBuilder.Entity<CarModel>(entity =>
+        // 1. Машины (Car)
+        modelBuilder.Entity<Car>(builder =>
         {
-            entity.Property(c => c.BodyType).HasConversion<string>();
-            entity.Property(c => c.DriveType).HasConversion<string>();
-            entity.Property(c => c.ClassType).HasConversion<string>();
+            builder.ToCollection("cars");
+            builder.HasKey(c => c.Id);
+            builder.Property(c => c.Id).HasElementName("_id");
+            // Остальные свойства маппятся автоматически, 
+            // но если нужно изменить имя поля в базе, используй .HasElementName("имя")
         });
 
-        modelBuilder.Entity<CarModelGeneration>(entity =>
+        // 2. Клиенты (Client)
+        modelBuilder.Entity<Client>(builder =>
         {
-            entity.Property(c => c.TransmissionType).HasConversion<string>();
-        });
-        modelBuilder.Entity<Rent>(entity =>
-        {
-            entity.Property(r => r.Duration).HasElementName("duration_hours");
+            builder.ToCollection("clients");
+            builder.HasKey(cl => cl.Id);
+            builder.Property(cl => cl.Id).HasElementName("_id");
         });
 
-        modelBuilder.Entity<Client>(entity =>
+        // 3. Аренда (Rent)
+        modelBuilder.Entity<Rent>(builder =>
         {
-            entity.Property(c => c.BirthDate).HasElementName("birth_date");
+            builder.ToCollection("rents");
+            builder.HasKey(r => r.Id);
+            builder.Property(r => r.Id).HasElementName("_id");
+
+            // Маппинг внешних ключей (если они есть как свойства в модели)
+            // builder.Property(r => r.CarId).HasElementName("car_id");
+            // builder.Property(r => r.ClientId).HasElementName("client_id");
+        });
+
+        // 4. Модели (CarModel)
+        modelBuilder.Entity<CarModel>(builder =>
+        {
+            builder.ToCollection("car_models");
+            builder.HasKey(m => m.Id);
+            builder.Property(m => m.Id).HasElementName("_id");
+        });
+
+        // 5. Поколения (CarModelGeneration)
+        modelBuilder.Entity<CarModelGeneration>(builder =>
+        {
+            builder.ToCollection("model_generations");
+            builder.HasKey(g => g.Id);
+            builder.Property(g => g.Id).HasElementName("_id");
+
+            // builder.Property(g => g.ModelId).HasElementName("model_id");
         });
     }
 }

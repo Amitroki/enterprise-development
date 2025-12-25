@@ -1,47 +1,70 @@
+using CarRental.Application;
 using CarRental.Application.Contracts.Car;
+using CarRental.Application.Contracts.CarModel;
+using CarRental.Application.Contracts.CarModelGeneration;
 using CarRental.Application.Contracts.Client;
 using CarRental.Application.Contracts.Rent;
 using CarRental.Application.Interfaces;
-using CarRental.Application.Mapping;
 using CarRental.Application.Services;
 using CarRental.Domain.DataModels;
 using CarRental.Domain.Interfaces;
+using CarRental.Domain.DataSeed;
 using CarRental.Domain.InternalData.ComponentClasses;
 using CarRental.Infrastructure;
-using CarRental.Infrastructure.InMemoryRepository;
+using CarRental.Infrastructure.Repository;
 using CarRental.ServiceDefaults;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
-using Mapster;
-using MapsterMapper;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// --- 1. Подключение инфраструктуры Aspire и MongoDB ---
 builder.AddServiceDefaults();
 builder.AddMongoDBClient("CarRentalDb");
 
-builder.Services.AddSingleton(TypeAdapterConfig.GlobalSettings);
-builder.Services.AddScoped<IMapper, ServiceMapper>();
+builder.Services.AddDbContext<CarRentalDbContext>((serviceProvider, options) =>
+{
+    var db = serviceProvider.GetRequiredService<IMongoDatabase>();
+    options.UseMongoDB(db.Client, db.DatabaseNamespace.DatabaseName);
+});
 
-builder.Services.AddScoped<CarRental.Domain.DataSeed.DataSeed>();
-builder.Services.AddScoped<IBaseRepository<CarModel>, CarModelRepository>();
-builder.Services.AddScoped<IBaseRepository<CarModelGeneration>, CarModelGenerationRepository>();
-builder.Services.AddScoped<IBaseRepository<Car>, CarRepository>();
-builder.Services.AddScoped<IBaseRepository<Client>, ClientRepository>();
-builder.Services.AddScoped<IBaseRepository<Rent>, RentRepository>();
+// --- 2. Регистрация AutoMapper (ВМЕСТО Mapster) ---
+// Находит CarRentalProfile и регистрирует IMapper в DI
+builder.Services.AddAutoMapper(config =>
+{
+    config.AddProfile(new CarRentalProfile());
+});
 
+builder.Services.AddSingleton<DataSeed>();
+
+// --- 3. Регистрация РЕПОЗИТОРИЕВ MONGODB ---
+builder.Services.AddScoped<IBaseRepository<CarModel>, DbCarModelRepository>();
+builder.Services.AddScoped<IBaseRepository<CarModelGeneration>, DbCarModelGenerationRepository>();
+builder.Services.AddScoped<IBaseRepository<Car>, DbCarRepository>();
+builder.Services.AddScoped<IBaseRepository<Client>, DbClientRepository>();
+builder.Services.AddScoped<IBaseRepository<Rent>, DbRentRepository>();
+
+// Дополнительная регистрация конкретных типов для AnalyticsService (если требуется)
+builder.Services.AddScoped<DbCarRepository>();
+builder.Services.AddScoped<DbClientRepository>();
+builder.Services.AddScoped<DbRentRepository>();
+
+// --- 4. Регистрация прикладных сервисов ---
 builder.Services.AddScoped<IApplicationService<CarDto, CarCreateUpdateDto>, CarService>();
 builder.Services.AddScoped<IApplicationService<ClientDto, ClientCreateUpdateDto>, ClientService>();
 builder.Services.AddScoped<IApplicationService<RentDto, RentCreateUpdateDto>, RentService>();
+builder.Services.AddScoped<IApplicationService<CarModelDto, CarModelCreateUpdateDto>, CarModelService>();
+builder.Services.AddScoped<IApplicationService<CarModelGenerationDto, CarModelGenerationCreateUpdateDto>, CarModelGenerationService>();
 
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 
-MappingConfig.Configure();
-
+// --- 5. Настройка контроллеров и Swagger ---
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -58,14 +81,49 @@ builder.Services.AddSwaggerGen(c =>
     }
 });
 
-builder.Services.AddDbContext<CarRentalDbContext>((serviceProvider, options) =>
-{
-    var client = serviceProvider.GetRequiredService<IMongoClient>();
-    options.UseMongoDB(client, "CarRentalDb");
-});
-
 var app = builder.Build();
 
+app.MapDefaultEndpoints();
+
+// --- 6. Инициализация Базы Данных (Seed) ---
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<CarRentalDbContext>();
+        var dataseed = services.GetRequiredService<DataSeed>();
+
+        if (await context.CarModels.AnyAsync()) return;
+
+        // 1. Сначала добавляем базовые модели
+        await context.CarModels.AddRangeAsync(dataseed.Models);
+        await context.SaveChangesAsync();
+
+        // 2. Затем поколения (они ссылаются на модели)
+        await context.ModelGenerations.AddRangeAsync(dataseed.Generations);
+        await context.SaveChangesAsync();
+
+        // 3. Машины (ссылаются на поколения)
+        await context.Cars.AddRangeAsync(dataseed.Cars);
+        await context.SaveChangesAsync();
+
+        // 4. Клиентов
+        await context.Clients.AddRangeAsync(dataseed.Clients);
+        await context.SaveChangesAsync();
+
+        // 5. И в конце аренду (ссылается на машины и клиентов)
+        await context.Rents.AddRangeAsync(dataseed.Rents);
+        await context.SaveChangesAsync();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
+}
+
+// --- 7. Конфигурация Pipeline ---
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -73,7 +131,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
 app.MapControllers();
 
