@@ -9,7 +9,7 @@ namespace CarRental.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class RentController(IApplicationService<RentDto, RentCreateUpdateDto> rentService, ILogger<RentController> logger) : ControllerBase
+public class RentController(IApplicationService<RentDto, RentCreateUpdateDto, Guid> rentService, ILogger<RentController> logger) : ControllerBase
 {
     /// <summary>
     /// Retrieves a list of all rental records, including calculated costs and linked entity names
@@ -41,7 +41,7 @@ public class RentController(IApplicationService<RentDto, RentCreateUpdateDto> re
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<RentDto>> Get(int id)
+    public async Task<ActionResult<RentDto>> Get(Guid id)
     {
         logger.LogInformation("{method} method of {controller} is called with {id} parameter", nameof(Get), GetType().Name, id);
         try
@@ -93,7 +93,7 @@ public class RentController(IApplicationService<RentDto, RentCreateUpdateDto> re
     [HttpPut("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult> Update(int id, RentCreateUpdateDto dto)
+    public async Task<ActionResult> Update(Guid id, RentCreateUpdateDto dto)
     {
         logger.LogInformation("{method} method of {controller} is called with {key},{@dto} parameters", nameof(Update), GetType().Name, id, dto);
         try
@@ -117,7 +117,7 @@ public class RentController(IApplicationService<RentDto, RentCreateUpdateDto> re
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult> Delete(int id)
+    public async Task<ActionResult> Delete(Guid id)
     {
         logger.LogInformation("{method} method of {controller} is called with {id} parameter", nameof(Delete), GetType().Name, id);
         try

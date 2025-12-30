@@ -6,7 +6,5 @@ namespace CarRental.Application.Contracts.Car;
 /// <param name="Id">The unique identifier of the car.</param>
 /// <param name="NumberPlate">The vehicle's license plate number.</param>
 /// <param name="Colour">The color of the car.</param>
-/// <param name="GenerationId">ID of the model generation.</param>
-/// <param name="ModelName">The descriptive name of the car model.</param>
-/// <param name="Year">Year of release</param>
-public record CarDto(int Id, string NumberPlate, string Colour, int GenerationId, string ModelName, int Year);
+/// <param name="ModelGenerationId">ID of the model generation.</param>
+public record CarDto(Guid Id, string NumberPlate, string Colour, Guid ModelGenerationId);

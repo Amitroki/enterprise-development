@@ -11,4 +11,4 @@ namespace CarRental.Application.Contracts.Rent;
 /// <param name="ClientId">The unique identifier of the client.</param>
 /// <param name="ClientLastName">The last name of the client.</param>
 /// <param name="TotalCost">The total calculated cost for the rental duration.</param>
-public record RentDto(int Id, DateTime StartDateTime, double Duration, int CarId, string CarLicensePlate, int ClientId, string ClientLastName, decimal TotalCost);
+public record RentDto(Guid Id, DateTime StartDateTime, double Duration, Guid CarId, string CarLicensePlate, Guid ClientId, string ClientLastName, decimal TotalCost);

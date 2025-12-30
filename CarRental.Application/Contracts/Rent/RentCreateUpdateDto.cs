@@ -7,4 +7,4 @@ namespace CarRental.Application.Contracts.Rent;
 /// <param name="Duration">The length of the rental period in hours.</param>
 /// <param name="CarId">The unique identifier of the car to be rented.</param>
 /// <param name="ClientId">The unique identifier of the client renting the car.</param>
-public record RentCreateUpdateDto(DateTime StartDateTime, double Duration, int CarId, int ClientId);
+public record RentCreateUpdateDto(DateTime StartDateTime, double Duration, Guid CarId, Guid ClientId);

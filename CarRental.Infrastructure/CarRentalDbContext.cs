@@ -44,10 +44,8 @@ public class CarRentalDbContext(DbContextOptions<CarRentalDbContext> options) : 
             builder.ToCollection("rents");
             builder.HasKey(r => r.Id);
             builder.Property(r => r.Id).HasElementName("_id");
-
-            // Маппинг внешних ключей (если они есть как свойства в модели)
-            // builder.Property(r => r.CarId).HasElementName("car_id");
-            // builder.Property(r => r.ClientId).HasElementName("client_id");
+            builder.Property(r => r.CarId).HasElementName("car_id");
+            builder.Property(r => r.ClientId).HasElementName("client_id");
         });
 
         // 4. Модели (CarModel)

@@ -6,13 +6,13 @@ namespace CarRental.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class CarModelController(IApplicationService<CarModelDto, CarModelCreateUpdateDto> service) : ControllerBase
+public class CarModelController(IApplicationService<CarModelDto, CarModelCreateUpdateDto, Guid> service) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<List<CarModelDto>>> GetAll() => Ok(await service.ReadAll());
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<CarModelDto>> Get(int id)
+    public async Task<ActionResult<CarModelDto>> Get(Guid id)
     {
         var result = await service.Read(id);
         return result == null ? NotFound() : Ok(result);
@@ -26,14 +26,14 @@ public class CarModelController(IApplicationService<CarModelDto, CarModelCreateU
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, CarModelCreateUpdateDto dto)
+    public async Task<IActionResult> Update(Guid id, CarModelCreateUpdateDto dto)
     {
         var result = await service.Update(dto, id);
         return result ? NoContent() : NotFound();
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         var result = await service.Delete(id);
         return result ? NoContent() : NotFound();

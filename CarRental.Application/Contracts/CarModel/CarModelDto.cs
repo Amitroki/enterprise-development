@@ -9,4 +9,4 @@ namespace CarRental.Application.Contracts.CarModel;
 /// <param name="SeatsNumber">The total passenger capacity.</param>
 /// <param name="BodyType">The style of the vehicle body (e.g., Sedan, SUV).</param>
 /// <param name="ClassType">The market segment or luxury class of the vehicle.</param>
-public record CarModelDto(int Id, string Name, string? DriveType, int SeatsNumber, string BodyType, string? ClassType);
+public record CarModelDto(Guid Id, string Name, string? DriveType, int SeatsNumber, string BodyType, string? ClassType);

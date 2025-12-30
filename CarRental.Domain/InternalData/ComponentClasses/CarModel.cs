@@ -12,7 +12,7 @@ public class CarModel
     /// <summary>
     /// Unique identifier of the car model
     /// </summary>
-    public required int Id { get; set; }
+    public required Guid Id { get; set; } = Guid.NewGuid();
 
     /// <summary>
     /// Name of the car model (e.g., "Camry", "Golf", "Model 3")

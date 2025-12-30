@@ -10,7 +10,12 @@ public class Car
     /// <summary>
     /// Unique identifier of the car
     /// </summary>
-    public required int Id { get; set; }
+    public required Guid Id { get; set; } = Guid.NewGuid();
+
+    /// <summary>
+    /// The model generation id this car belongs to, defining its year, transmission type, and base rental cost
+    /// </summary>
+    public required Guid ModelGenerationId { get; set; }
 
     /// <summary>
     /// The model generation this car belongs to, defining its year, transmission type, and base rental cost

@@ -9,7 +9,7 @@ namespace CarRental.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class ClientController(IApplicationService<ClientDto, ClientCreateUpdateDto> clientService, ILogger<ClientController> logger) : ControllerBase
+public class ClientController(IApplicationService<ClientDto, ClientCreateUpdateDto, Guid> clientService, ILogger<ClientController> logger) : ControllerBase
 {
     /// <summary>
     /// Retrieves a list of all registered clients
@@ -41,7 +41,7 @@ public class ClientController(IApplicationService<ClientDto, ClientCreateUpdateD
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<ClientDto>> Get(int id)
+    public async Task<ActionResult<ClientDto>> Get(Guid id)
     {
         logger.LogInformation("{method} method of {controller} is called with {id} parameter", nameof(Get), GetType().Name, id);
         try
@@ -93,7 +93,7 @@ public class ClientController(IApplicationService<ClientDto, ClientCreateUpdateD
     [HttpPut("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult> Update(int id, ClientCreateUpdateDto dto)
+    public async Task<ActionResult> Update(Guid id, ClientCreateUpdateDto dto)
     {
         logger.LogInformation("{method} method of {controller} is called with {key},{@dto} parameters", nameof(Update), GetType().Name, id, dto);
         try
@@ -117,7 +117,7 @@ public class ClientController(IApplicationService<ClientDto, ClientCreateUpdateD
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult> Delete(int id)
+    public async Task<ActionResult> Delete(Guid id)
     {
         logger.LogInformation("{method} method of {controller} is called with {id} parameter", nameof(Delete), GetType().Name, id);
         try

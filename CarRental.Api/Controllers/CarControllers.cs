@@ -9,7 +9,7 @@ namespace CarRental.Api.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class CarController(IApplicationService<CarDto, CarCreateUpdateDto> carService, ILogger<CarController> logger) : ControllerBase
+public class CarController(IApplicationService<CarDto, CarCreateUpdateDto, Guid> carService, ILogger<CarController> logger) : ControllerBase
 {
     /// <summary>
     /// Retrieves a list of all cars available in the system
@@ -41,7 +41,7 @@ public class CarController(IApplicationService<CarDto, CarCreateUpdateDto> carSe
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<CarDto>> Get(int id)
+    public async Task<ActionResult<CarDto>> Get(Guid id)
     {
         logger.LogInformation("{method} method of {controller} is called with {id} parameter", nameof(Get), GetType().Name, id);
         try
@@ -93,7 +93,7 @@ public class CarController(IApplicationService<CarDto, CarCreateUpdateDto> carSe
     [HttpPut("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<CarDto>> Update(int id, [FromBody] CarCreateUpdateDto dto)
+    public async Task<ActionResult<CarDto>> Update(Guid id, [FromBody] CarCreateUpdateDto dto)
     {
         logger.LogInformation("{method} method of {controller} is called with {key},{@dto} parameters", nameof(Update), GetType().Name, id, dto);
         try
@@ -117,7 +117,7 @@ public class CarController(IApplicationService<CarDto, CarCreateUpdateDto> carSe
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult> Delete(int id)
+    public async Task<ActionResult> Delete(Guid id)
     {
         logger.LogInformation("{method} method of {controller} is called with {id} parameter", nameof(Delete), GetType().Name, id);
         try

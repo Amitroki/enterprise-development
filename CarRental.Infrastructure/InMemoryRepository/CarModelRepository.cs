@@ -13,10 +13,10 @@ public class CarModelRepository(DataSeed data) : BaseRepository<CarModel>(data.M
     /// <summary>
     /// Gets the unique identifier from the specified CarModel entity
     /// </summary>
-    protected override int GetEntityId(CarModel model) => model.Id;
+    protected override Guid GetEntityId(CarModel model) => model.Id;
 
     /// <summary>
     /// Sets the unique identifier for the specified CarModel entity
     /// </summary>
-    protected override void SetEntityId(CarModel model, int id) => model.Id = id;
+    protected override void SetEntityId(CarModel model, Guid id) => model.Id = id;
 }

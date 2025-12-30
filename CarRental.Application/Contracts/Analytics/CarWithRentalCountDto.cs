@@ -7,4 +7,4 @@ namespace CarRental.Application.Contracts.Analytics;
 /// <param name="ModelName">The descriptive name of the car model.</param>
 /// <param name="NumberPlate">The vehicle's license plate number.</param>
 /// <param name="RentalCount">Total number of rental agreements associated with this car.</param>
-public record CarWithRentalCountDto(int Id, string ModelName, string NumberPlate, int RentalCount);
+public record CarWithRentalCountDto(Guid Id, string ModelName, string NumberPlate, int RentalCount);

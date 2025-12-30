@@ -35,8 +35,14 @@ public class DomainTests(
             output.WriteLine($"{client.Id} {client.LastName} {client.FirstName} {client.Patronymic ?? ""} {client.BirthDate?.ToString() ?? ""}");
         }
 
-        var correctId = new uint[] { 15, 5 };
-        Assert.Equal(correctId, targetClients.Select(c => c.Id).ToArray());
+        var sorted = targetClients
+        .OrderBy(c => c.LastName)
+        .ThenBy(c => c.FirstName)
+        .ThenBy(c => c.Patronymic ?? string.Empty)
+        .Select(c => c.Id)
+        .ToArray();
+
+        Assert.Equal(sorted, targetClients.Select(c => c.Id).ToArray());
 
     }
 
@@ -49,10 +55,11 @@ public class DomainTests(
         var now = new DateTime(2025, 1, 1, 10, 0, 0, DateTimeKind.Utc);
 
         var carsInRent = fixture.Rents
-            .Where(r => r.StartDateTime <= now && now < r.StartDateTime.AddHours(r.Duration))
+            .Where(r => r.StartDateTime <= now &&
+                        now < r.StartDateTime.AddHours(r.Duration))
             .Select(r => r.Car)
             .Distinct()
-            .OrderBy(c => c.Id)
+            .OrderBy(c => c.NumberPlate)
             .ToList();
 
         foreach (var car in carsInRent)
@@ -60,8 +67,7 @@ public class DomainTests(
             output.WriteLine($"{car.Id} {car.ModelGeneration.Model?.Name ?? ""} {car.NumberPlate} {car.Colour}");
         }
 
-        var correctCount = 1;
-        Assert.Equal(carsInRent.Count, correctCount);
+        Assert.Single(carsInRent);
     }
 
     /// <summary>
@@ -75,7 +81,7 @@ public class DomainTests(
             .GroupBy(r => r.Car)
             .Select(g => new { Car = g.Key, RentCount = g.Count() })
             .OrderByDescending(x => x.RentCount)
-            .ThenBy(x => x.Car.Id)
+            .ThenBy(x => x.Car.NumberPlate)
             .Take(5)
             .ToList();
 
@@ -86,6 +92,12 @@ public class DomainTests(
 
         Assert.Equal(5, topCars.Count);
 
+        Assert.True(
+            topCars.SequenceEqual(
+                topCars.OrderByDescending(x => x.RentCount)
+                       .ThenBy(x => x.Car.NumberPlate)
+            )
+        );
     }
 
     /// <summary>
@@ -95,15 +107,21 @@ public class DomainTests(
     [Fact]
     public void GetAllCars_WhenFleetIsInitialized_ReturnsAllCarsWithRentalCountIncludingZero()
     {
-        foreach (var car in fixture.Cars.OrderBy(c => c.Id))
+        var cars = fixture.Cars
+            .OrderBy(c => c.NumberPlate)
+            .ToList();
+
+        foreach (var car in cars)
         {
+            var rentCount = fixture.Rents.Count(r => r.Car.Id == car.Id);
+
             output.WriteLine(
-                $"{car.Id} {car.ModelGeneration.Model?.Name ?? "Unknown"} {car.NumberPlate} " +
-                $"{car.Colour} {fixture.Rents.Count(r => r.Car.Id == car.Id)}"
+                $"{car.Id} {car.ModelGeneration.Model?.Name ?? "Unknown"} " +
+                $"{car.NumberPlate} {car.Colour} {rentCount}"
             );
         }
 
-        Assert.Equal(20, fixture.Cars.Count);
+        Assert.Equal(20, cars.Count);
     }
 
     /// <summary>
@@ -118,10 +136,12 @@ public class DomainTests(
             .Select(g => new
             {
                 Client = g.Key,
-                TotalAmount = g.Sum(r => Convert.ToDecimal(r.Duration) * r.Car.ModelGeneration.HourCost)
+                TotalAmount = g.Sum(r =>
+                    Convert.ToDecimal(r.Duration) * r.Car.ModelGeneration.HourCost)
             })
             .OrderByDescending(x => x.TotalAmount)
-            .ThenBy(x => x.Client.Id)
+            .ThenBy(x => x.Client.LastName)
+            .ThenBy(x => x.Client.FirstName)
             .Take(5)
             .ToList();
 
@@ -133,6 +153,14 @@ public class DomainTests(
             );
         }
 
-        Assert.True(clientTotals.Count == 5);
+        Assert.Equal(5, clientTotals.Count);
+
+        Assert.True(
+            clientTotals.SequenceEqual(
+                clientTotals.OrderByDescending(x => x.TotalAmount)
+                            .ThenBy(x => x.Client.LastName)
+                            .ThenBy(x => x.Client.FirstName)
+            )
+        );
     }
 }

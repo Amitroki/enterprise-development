@@ -7,11 +7,11 @@ using CarRental.Domain.Interfaces;
 namespace CarRental.Application.Services;
 
 public class RentService(
-    IBaseRepository<Rent> repository,
-    IBaseRepository<Car> carRepository,
-    IBaseRepository<Client> clientRepository,
+    IBaseRepository<Rent, Guid> repository,
+    IBaseRepository<Car, Guid> carRepository,
+    IBaseRepository<Client, Guid> clientRepository,
     IMapper mapper)
-    : IApplicationService<RentDto, RentCreateUpdateDto>
+    : IApplicationService<RentDto, RentCreateUpdateDto, Guid>
 {
     public async Task<List<RentDto>> ReadAll()
     {
@@ -19,45 +19,60 @@ public class RentService(
         return mapper.Map<List<RentDto>>(rents);
     }
 
-    public async Task<RentDto?> Read(int id)
+    public async Task<RentDto> Read(Guid id)
     {
-        var entity = await repository.Read(id);
-        return entity == null ? null : mapper.Map<RentDto>(entity);
+        var entity = await repository.Read(id)
+            ?? throw new KeyNotFoundException($"Rent with Id {id} not found.");
+
+        return mapper.Map<RentDto>(entity);
     }
 
     public async Task<RentDto> Create(RentCreateUpdateDto dto)
     {
-        var car = await carRepository.Read(dto.CarId);
-        var client = await clientRepository.Read(dto.ClientId);
+        var car = await carRepository.Read(dto.CarId)
+            ?? throw new KeyNotFoundException($"Car with Id {dto.CarId} not found.");
 
-        if (car == null || client == null)
-            throw new Exception("Car or client is not found");
+        var client = await clientRepository.Read(dto.ClientId)
+            ?? throw new KeyNotFoundException($"Client with Id {dto.ClientId} not found.");
 
         var entity = mapper.Map<Rent>(dto);
         entity.Car = car;
         entity.Client = client;
 
         var id = await repository.Create(entity);
-        var savedEntity = await repository.Read(id);
 
-        return mapper.Map<RentDto>(savedEntity!);
+        var savedEntity = await repository.Read(id)
+            ?? throw new InvalidOperationException("Created rent was not found.");
+
+        return mapper.Map<RentDto>(savedEntity);
     }
 
-    public async Task<bool> Update(RentCreateUpdateDto dto, int id)
+    public async Task<bool> Update(RentCreateUpdateDto dto, Guid id)
     {
         var existing = await repository.Read(id);
-        if (existing is null) return false;
+        if (existing is null)
+            return false;
 
         mapper.Map(dto, existing);
 
-        var car = await carRepository.Read(dto.CarId);
-        var client = await clientRepository.Read(dto.ClientId);
+        // валидируем и обновляем связи
+        if (dto.CarId != existing.Car?.Id)
+        {
+            var car = await carRepository.Read(dto.CarId)
+                ?? throw new KeyNotFoundException($"Car with Id {dto.CarId} not found.");
+            existing.Car = car;
+        }
 
-        if (car != null) existing.Car = car;
-        if (client != null) existing.Client = client;
+        if (dto.ClientId != existing.Client?.Id)
+        {
+            var client = await clientRepository.Read(dto.ClientId)
+                ?? throw new KeyNotFoundException($"Client with Id {dto.ClientId} not found.");
+            existing.Client = client;
+        }
 
         return await repository.Update(existing, id);
     }
 
-    public async Task<bool> Delete(int id) => await repository.Delete(id);
+    public async Task<bool> Delete(Guid id)
+        => await repository.Delete(id);
 }

@@ -6,4 +6,4 @@ namespace CarRental.Application.Contracts.Car;
 /// <param name="NumberPlate">The vehicle's license plate number.</param>
 /// <param name="Colour">The color of the car.</param>
 /// <param name="ModelGenerationId">The unique identifier of the associated car model generation.</param>
-public record CarCreateUpdateDto(string NumberPlate, string Colour, int ModelGenerationId);
+public record CarCreateUpdateDto(string NumberPlate, string Colour, Guid ModelGenerationId);

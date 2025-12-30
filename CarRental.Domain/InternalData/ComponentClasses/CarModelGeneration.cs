@@ -13,7 +13,7 @@ public class CarModelGeneration
     /// <summary>
     /// Unique identifier of the car model generation
     /// </summary>
-    public required int Id { get; set; }
+    public required Guid Id { get; set; } = Guid.NewGuid();
 
     /// <summary>
     /// Calendar year when this generation of the car model was produced
@@ -24,6 +24,13 @@ public class CarModelGeneration
     /// Type of transmission used in this car model generation (manual, automatic, robotic or variable)
     /// </summary>
     public TransmissionType? TransmissionType { get; set; }
+
+    /// <summary>
+    /// The car model ID to which this generation belongs (a class that describes 
+    /// the main technical characteristics, such as the model name, 
+    /// drive type, transmission type, body type, and vehicle class)
+    /// </summary>
+    public Guid ModelId { get; set; }
 
     /// <summary>
     /// The car model to which this generation belongs (a class that describes 

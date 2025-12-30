@@ -18,7 +18,6 @@ using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- 1. Подключение инфраструктуры Aspire и MongoDB ---
 builder.AddServiceDefaults();
 builder.AddMongoDBClient("CarRentalDb");
 
@@ -28,8 +27,12 @@ builder.Services.AddDbContext<CarRentalDbContext>((serviceProvider, options) =>
     options.UseMongoDB(db.Client, db.DatabaseNamespace.DatabaseName);
 });
 
-// --- 2. Регистрация AutoMapper (ВМЕСТО Mapster) ---
-// Находит CarRentalProfile и регистрирует IMapper в DI
+builder.Services.AddSingleton(sp =>
+{
+    var client = sp.GetRequiredService<IMongoClient>();
+    return client.GetDatabase("car-rental");
+});
+
 builder.Services.AddAutoMapper(config =>
 {
     config.AddProfile(new CarRentalProfile());
@@ -37,28 +40,24 @@ builder.Services.AddAutoMapper(config =>
 
 builder.Services.AddSingleton<DataSeed>();
 
-// --- 3. Регистрация РЕПОЗИТОРИЕВ MONGODB ---
-builder.Services.AddScoped<IBaseRepository<CarModel>, DbCarModelRepository>();
-builder.Services.AddScoped<IBaseRepository<CarModelGeneration>, DbCarModelGenerationRepository>();
-builder.Services.AddScoped<IBaseRepository<Car>, DbCarRepository>();
-builder.Services.AddScoped<IBaseRepository<Client>, DbClientRepository>();
-builder.Services.AddScoped<IBaseRepository<Rent>, DbRentRepository>();
+builder.Services.AddScoped<IBaseRepository<CarModel, Guid>, DbCarModelRepository>();
+builder.Services.AddScoped<IBaseRepository<CarModelGeneration, Guid>, DbCarModelGenerationRepository>();
+builder.Services.AddScoped<IBaseRepository<Car, Guid>, DbCarRepository>();
+builder.Services.AddScoped<IBaseRepository<Client, Guid>, DbClientRepository>();
+builder.Services.AddScoped<IBaseRepository<Rent, Guid>, DbRentRepository>();
 
-// Дополнительная регистрация конкретных типов для AnalyticsService (если требуется)
 builder.Services.AddScoped<DbCarRepository>();
 builder.Services.AddScoped<DbClientRepository>();
 builder.Services.AddScoped<DbRentRepository>();
 
-// --- 4. Регистрация прикладных сервисов ---
-builder.Services.AddScoped<IApplicationService<CarDto, CarCreateUpdateDto>, CarService>();
-builder.Services.AddScoped<IApplicationService<ClientDto, ClientCreateUpdateDto>, ClientService>();
-builder.Services.AddScoped<IApplicationService<RentDto, RentCreateUpdateDto>, RentService>();
-builder.Services.AddScoped<IApplicationService<CarModelDto, CarModelCreateUpdateDto>, CarModelService>();
-builder.Services.AddScoped<IApplicationService<CarModelGenerationDto, CarModelGenerationCreateUpdateDto>, CarModelGenerationService>();
+builder.Services.AddScoped<IApplicationService<CarDto, CarCreateUpdateDto, Guid>, CarService>();
+builder.Services.AddScoped<IApplicationService<ClientDto, ClientCreateUpdateDto, Guid>, ClientService>();
+builder.Services.AddScoped<IApplicationService<RentDto, RentCreateUpdateDto, Guid>, RentService>();
+builder.Services.AddScoped<IApplicationService<CarModelDto, CarModelCreateUpdateDto, Guid>, CarModelService>();
+builder.Services.AddScoped<IApplicationService<CarModelGenerationDto, CarModelGenerationCreateUpdateDto, Guid>, CarModelGenerationService>();
 
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 
-// --- 5. Настройка контроллеров и Swagger ---
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -85,7 +84,6 @@ var app = builder.Build();
 
 app.MapDefaultEndpoints();
 
-// --- 6. Инициализация Базы Данных (Seed) ---
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -96,23 +94,18 @@ using (var scope = app.Services.CreateScope())
 
         if (await context.CarModels.AnyAsync()) return;
 
-        // 1. Сначала добавляем базовые модели
         await context.CarModels.AddRangeAsync(dataseed.Models);
         await context.SaveChangesAsync();
 
-        // 2. Затем поколения (они ссылаются на модели)
         await context.ModelGenerations.AddRangeAsync(dataseed.Generations);
         await context.SaveChangesAsync();
 
-        // 3. Машины (ссылаются на поколения)
         await context.Cars.AddRangeAsync(dataseed.Cars);
         await context.SaveChangesAsync();
 
-        // 4. Клиентов
         await context.Clients.AddRangeAsync(dataseed.Clients);
         await context.SaveChangesAsync();
 
-        // 5. И в конце аренду (ссылается на машины и клиентов)
         await context.Rents.AddRangeAsync(dataseed.Rents);
         await context.SaveChangesAsync();
     }
@@ -123,7 +116,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// --- 7. Конфигурация Pipeline ---
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
