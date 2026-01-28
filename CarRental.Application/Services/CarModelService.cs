@@ -14,11 +14,8 @@ public class CarModelService(
     public async Task<CarModelDto> Create(CarModelCreateUpdateDto dto)
     {
         var entity = mapper.Map<CarModel>(dto);
-
-        // Репозиторий генерирует Guid
         var id = await repository.Create(entity);
         entity.Id = id;
-
         return mapper.Map<CarModelDto>(entity);
     }
 
@@ -26,7 +23,6 @@ public class CarModelService(
     {
         var entity = await repository.Read(id)
             ?? throw new KeyNotFoundException($"CarModel with Id {id} not found.");
-
         return mapper.Map<CarModelDto>(entity);
     }
 
@@ -41,10 +37,7 @@ public class CarModelService(
         var existing = await repository.Read(id);
         if (existing is null)
             return false;
-
-        // Обновляем поля существующей сущности
         mapper.Map(dto, existing);
-
         return await repository.Update(existing, id);
     }
 

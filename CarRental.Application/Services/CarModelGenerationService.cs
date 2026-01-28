@@ -14,21 +14,14 @@ public class CarModelGenerationService(
 {
     public async Task<CarModelGenerationDto> Create(CarModelGenerationCreateUpdateDto dto)
     {
-        // DTO -> Entity
         var entity = mapper.Map<CarModelGeneration>(dto);
-
-        // Загружаем модель
         var model = await modelRepository.Read(dto.ModelId);
         if (model is null)
             throw new KeyNotFoundException($"CarModel with Id {dto.ModelId} not found.");
-
         entity.Model = model;
         entity.ModelId = model.Id;
-
-        // Репозиторий сам генерирует Guid
         var id = await repository.Create(entity);
         entity.Id = id;
-
         return mapper.Map<CarModelGenerationDto>(entity);
     }
 
@@ -36,15 +29,12 @@ public class CarModelGenerationService(
     {
         var entity = await repository.Read(id)
             ?? throw new KeyNotFoundException($"CarModelGeneration with Id {id} not found.");
-
         return mapper.Map<CarModelGenerationDto>(entity);
     }
 
     public async Task<List<CarModelGenerationDto>> ReadAll()
     {
         var entities = await repository.ReadAll();
-
-        // Подгружаем модели (эмуляция Include)
         foreach (var generation in entities)
         {
             if (generation.ModelId != Guid.Empty)
@@ -52,7 +42,6 @@ public class CarModelGenerationService(
                 generation.Model = await modelRepository.Read(generation.ModelId);
             }
         }
-
         return mapper.Map<List<CarModelGenerationDto>>(entities);
     }
 
@@ -61,18 +50,12 @@ public class CarModelGenerationService(
         var existing = await repository.Read(id);
         if (existing is null)
             return false;
-
-        // Обновляем scalar-поля
         mapper.Map(dto, existing);
-
-        // Обновляем модель
         var model = await modelRepository.Read(dto.ModelId);
         if (model is null)
             throw new KeyNotFoundException($"CarModel with Id {dto.ModelId} not found.");
-
         existing.Model = model;
         existing.ModelId = model.Id;
-
         return await repository.Update(existing, id);
     }
 

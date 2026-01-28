@@ -48,7 +48,7 @@ public class AnalyticsService(
                 );
             })
             .OrderByDescending(x => x.RentalCount)
-            .ThenBy(x => x.NumberPlate) // детерминированно вместо Guid
+            .ThenBy(x => x.NumberPlate)
             .Take(5)
             .ToList();
     }

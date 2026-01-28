@@ -31,19 +31,14 @@ public class RentService(
     {
         var car = await carRepository.Read(dto.CarId)
             ?? throw new KeyNotFoundException($"Car with Id {dto.CarId} not found.");
-
         var client = await clientRepository.Read(dto.ClientId)
             ?? throw new KeyNotFoundException($"Client with Id {dto.ClientId} not found.");
-
         var entity = mapper.Map<Rent>(dto);
         entity.Car = car;
         entity.Client = client;
-
         var id = await repository.Create(entity);
-
         var savedEntity = await repository.Read(id)
             ?? throw new InvalidOperationException("Created rent was not found.");
-
         return mapper.Map<RentDto>(savedEntity);
     }
 
@@ -52,24 +47,19 @@ public class RentService(
         var existing = await repository.Read(id);
         if (existing is null)
             return false;
-
         mapper.Map(dto, existing);
-
-        // валидируем и обновляем связи
         if (dto.CarId != existing.Car?.Id)
         {
             var car = await carRepository.Read(dto.CarId)
                 ?? throw new KeyNotFoundException($"Car with Id {dto.CarId} not found.");
             existing.Car = car;
         }
-
         if (dto.ClientId != existing.Client?.Id)
         {
             var client = await clientRepository.Read(dto.ClientId)
                 ?? throw new KeyNotFoundException($"Client with Id {dto.ClientId} not found.");
             existing.Client = client;
         }
-
         return await repository.Update(existing, id);
     }
 

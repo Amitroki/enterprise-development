@@ -16,21 +16,15 @@ public class CarRentalDbContext(DbContextOptions<CarRentalDbContext> options) : 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-        // В MongoDB EF Core транзакции не поддерживаются в базовом режиме
         Database.AutoTransactionBehavior = AutoTransactionBehavior.Never;
 
-        // 1. Машины (Car)
         modelBuilder.Entity<Car>(builder =>
         {
             builder.ToCollection("cars");
             builder.HasKey(c => c.Id);
             builder.Property(c => c.Id).HasElementName("_id");
-            // Остальные свойства маппятся автоматически, 
-            // но если нужно изменить имя поля в базе, используй .HasElementName("имя")
         });
 
-        // 2. Клиенты (Client)
         modelBuilder.Entity<Client>(builder =>
         {
             builder.ToCollection("clients");
@@ -38,7 +32,6 @@ public class CarRentalDbContext(DbContextOptions<CarRentalDbContext> options) : 
             builder.Property(cl => cl.Id).HasElementName("_id");
         });
 
-        // 3. Аренда (Rent)
         modelBuilder.Entity<Rent>(builder =>
         {
             builder.ToCollection("rents");
@@ -48,7 +41,6 @@ public class CarRentalDbContext(DbContextOptions<CarRentalDbContext> options) : 
             builder.Property(r => r.ClientId).HasElementName("client_id");
         });
 
-        // 4. Модели (CarModel)
         modelBuilder.Entity<CarModel>(builder =>
         {
             builder.ToCollection("car_models");
@@ -56,14 +48,11 @@ public class CarRentalDbContext(DbContextOptions<CarRentalDbContext> options) : 
             builder.Property(m => m.Id).HasElementName("_id");
         });
 
-        // 5. Поколения (CarModelGeneration)
         modelBuilder.Entity<CarModelGeneration>(builder =>
         {
             builder.ToCollection("model_generations");
             builder.HasKey(g => g.Id);
             builder.Property(g => g.Id).HasElementName("_id");
-
-            // builder.Property(g => g.ModelId).HasElementName("model_id");
         });
     }
 }

@@ -21,20 +21,15 @@ public class ClientService(
     {
         var entity = await repository.Read(id)
             ?? throw new KeyNotFoundException($"Client with Id {id} not found.");
-
         return mapper.Map<ClientDto>(entity);
     }
 
     public async Task<ClientDto> Create(ClientCreateUpdateDto dto)
     {
         var entity = mapper.Map<Client>(dto);
-
         var id = await repository.Create(entity);
-
-        // перечитываем для консистентности
         var savedEntity = await repository.Read(id)
             ?? throw new InvalidOperationException("Created client was not found.");
-
         return mapper.Map<ClientDto>(savedEntity);
     }
 
@@ -43,9 +38,7 @@ public class ClientService(
         var existing = await repository.Read(id);
         if (existing is null)
             return false;
-
         mapper.Map(dto, existing);
-
         return await repository.Update(existing, id);
     }
 

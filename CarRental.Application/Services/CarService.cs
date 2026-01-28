@@ -23,25 +23,18 @@ public class CarService(
     {
         var entity = await repository.Read(id)
             ?? throw new KeyNotFoundException($"Car with Id {id} not found.");
-
         return mapper.Map<CarDto>(entity);
     }
 
     public async Task<CarDto> Create(CarCreateUpdateDto dto)
     {
-        // Проверяем существование поколения
         var generation = await generationRepository.Read(dto.ModelGenerationId);
         if (generation is null)
             throw new KeyNotFoundException($"ModelGeneration with Id {dto.ModelGenerationId} not found.");
-
         var entity = mapper.Map<Car>(dto);
-
         var id = await repository.Create(entity);
-
-        // перечитываем для консистентности (in-memory — не обязательно, но безопасно)
         var savedEntity = await repository.Read(id)
             ?? throw new InvalidOperationException("Created car was not found.");
-
         return mapper.Map<CarDto>(savedEntity);
     }
 
@@ -50,17 +43,13 @@ public class CarService(
         var existing = await repository.Read(id);
         if (existing is null)
             return false;
-
-        // Если меняется поколение — валидируем
         if (dto.ModelGenerationId != existing.ModelGenerationId)
         {
             var generation = await generationRepository.Read(dto.ModelGenerationId);
             if (generation is null)
                 throw new KeyNotFoundException($"ModelGeneration with Id {dto.ModelGenerationId} not found.");
         }
-
         mapper.Map(dto, existing);
-
         return await repository.Update(existing, id);
     }
 
