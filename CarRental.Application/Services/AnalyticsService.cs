@@ -8,6 +8,15 @@ using CarRental.Domain.InternalData.ComponentClasses;
 
 namespace CarRental.Application.Services;
 
+/// <summary>
+/// Service for performing various analytical queries and reporting on car rental data
+/// </summary>
+/// <param name="rentRepository">Repository for rental records</param>
+/// <param name="carRepository">Repository for car data</param>
+/// <param name="carModelRepository">Repository for car model definitions</param>
+/// <param name="carModelGenerationRepository">Repository for car generation data</param>
+/// <param name="clientRepository">Repository for client information</param>
+/// <param name="mapper">AutoMapper instance for DTO conversion</param>
 public class AnalyticsService(
     IBaseRepository<Rent, Guid> rentRepository,
     IBaseRepository<Car, Guid> carRepository,
@@ -17,6 +26,11 @@ public class AnalyticsService(
     IMapper mapper)
     : IAnalyticsService
 {
+    /// <summary>
+    /// Finds all clients who have rented a specific car model identified by its name
+    /// </summary>
+    /// <param name="modelName">The name (or part of the name) of the car model</param>
+    /// <returns>A list of unique clients who rented the specified model, ordered by name</returns>
     public async Task<List<ClientDto>> ReadClientsByModelName(string modelName)
     {
         var rents = await rentRepository.ReadAll();
@@ -50,6 +64,11 @@ public class AnalyticsService(
             .ToList();
     }
 
+    /// <summary>
+    /// Identifies all cars that are currently or were rented at a specific point in time
+    /// </summary>
+    /// <param name="atTime">The date and time to check for active rentals</param>
+    /// <returns>A list of cars that were in rent at the specified time</returns>
     public async Task<List<CarInRentDto>> ReadCarsInRent(DateTime atTime)
     {
         var allRents = await rentRepository.ReadAll();
@@ -90,6 +109,10 @@ public class AnalyticsService(
             .ToList()!;
     }
 
+    /// <summary>
+    /// Retrieves the top 5 cars with the highest total number of rental transactions
+    /// </summary>
+    /// <returns>A list of the 5 most frequently rented cars with their rental counts</returns>
     public async Task<List<CarWithRentalCountDto>> ReadTop5MostRentedCars()
     {
         var allRents = await rentRepository.ReadAll();
@@ -128,6 +151,10 @@ public class AnalyticsService(
             .ToList()!;
     }
 
+    /// <summary>
+    /// Calculates the total number of rentals for every car in the system
+    /// </summary>
+    /// <returns>A complete list of cars and how many times each has been rented</returns>
     public async Task<List<CarWithRentalCountDto>> ReadAllCarsWithRentalCount()
     {
         var allRents = await rentRepository.ReadAll();
@@ -156,6 +183,10 @@ public class AnalyticsService(
             .ToList();
     }
 
+    /// <summary>
+    /// Identifies the top 5 clients who have spent the most money on rentals based on duration and hourly cost
+    /// </summary>
+    /// <returns>A list of the 5 highest-paying clients with their total spent amounts</returns>
     public async Task<List<ClientWithTotalAmountDto>> ReadTop5ClientsByTotalAmount()
     {
         var allRents = await rentRepository.ReadAll();

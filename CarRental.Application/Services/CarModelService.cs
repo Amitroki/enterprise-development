@@ -6,11 +6,21 @@ using CarRental.Domain.InternalData.ComponentClasses;
 
 namespace CarRental.Application.Services;
 
+/// <summary>
+/// Service for managing car model business logic and DTO mapping
+/// </summary>
+/// <param name="repository">The car model data repository.</param>
+/// <param name="mapper">The AutoMapper instance for entity-DTO transformations</param>
 public class CarModelService(
     IBaseRepository<CarModel, Guid> repository,
     IMapper mapper)
     : IApplicationService<CarModelDto, CarModelCreateUpdateDto, Guid>
 {
+    /// <summary>
+    /// Creates a new car model and returns the result without re-querying the database
+    /// </summary>
+    /// <param name="dto">The data transfer object for creating a car model</param>
+    /// <returns>The newly created car model DTO.</returns>
     public async Task<CarModelDto> Create(CarModelCreateUpdateDto dto)
     {
         var entity = mapper.Map<CarModel>(dto);
@@ -19,19 +29,35 @@ public class CarModelService(
         return mapper.Map<CarModelDto>(entity);
     }
 
-    public async Task<CarModelDto> Read(Guid id)
+    /// <summary>
+    /// Retrieves a specific car model by its unique identifier
+    /// </summary>
+    /// <param name="id">The unique identifier of the car model</param>
+    /// <returns>The mapped car model DTO</returns>
+    /// <exception cref="KeyNotFoundException">Thrown if the car model is not found</exception>
+    public async Task<CarModelDto?> Read(Guid id)
     {
         var entity = await repository.Read(id)
             ?? throw new KeyNotFoundException($"CarModel with Id {id} not found.");
         return mapper.Map<CarModelDto>(entity);
     }
 
+    /// <summary>
+    /// Retrieves all car models from the repository
+    /// </summary>
+    /// <returns>A list of car model DTOs</returns>
     public async Task<List<CarModelDto>> ReadAll()
     {
         var entities = await repository.ReadAll();
         return mapper.Map<List<CarModelDto>>(entities);
     }
 
+    /// <summary>
+    /// Updates an existing car model's information
+    /// </summary>
+    /// <param name="dto">The updated car model data</param>
+    /// <param name="id">The identifier of the model to update</param>
+    /// <returns>True if the update succeeded; otherwise, false</returns>
     public async Task<bool> Update(CarModelCreateUpdateDto dto, Guid id)
     {
         var existing = await repository.Read(id);
@@ -41,6 +67,11 @@ public class CarModelService(
         return await repository.Update(existing, id);
     }
 
+    /// <summary>
+    /// Deletes a car model record by its identifier
+    /// </summary>
+    /// <param name="id">The unique identifier of the car model to remove</param>
+    /// <returns>True if the deletion was successful</returns>
     public async Task<bool> Delete(Guid id)
         => await repository.Delete(id);
 }

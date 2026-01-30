@@ -4,10 +4,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CarRental.Api.Controllers;
 
+/// <summary>
+/// API Controller for managing car model generations
+/// </summary>
+/// <param name="service">The application service for car model generation logic</param>
+/// <param name="logger">The logger instance for diagnostics</param>
 [ApiController]
 [Route("api/[controller]")]
 public class CarModelGenerationsController(IApplicationService<CarModelGenerationDto, CarModelGenerationCreateUpdateDto, Guid> service, ILogger<CarController> logger) : ControllerBase
 {
+    /// <summary>
+    /// Retrieves all car model generations
+    /// </summary>
+    /// <returns>A list of car model generation DTOs</returns>
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
@@ -27,6 +36,11 @@ public class CarModelGenerationsController(IApplicationService<CarModelGeneratio
         }
     }
 
+    /// <summary>
+    /// Retrieves a specific car model generation by its identifier
+    /// </summary>
+    /// <param name="id">The unique identifier of the car model generation</param>
+    /// <returns>The requested car model generation DTO</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
@@ -52,6 +66,11 @@ public class CarModelGenerationsController(IApplicationService<CarModelGeneratio
         }
     }
 
+    /// <summary>
+    /// Creates a new car model generation
+    /// </summary>
+    /// <param name="dto">The data transfer object containing car model generation details</param>
+    /// <returns>The created car model generation DTO</returns>
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(500)]
@@ -71,6 +90,12 @@ public class CarModelGenerationsController(IApplicationService<CarModelGeneratio
         }
     }
 
+    /// <summary>
+    /// Updates an existing car model generation
+    /// </summary>
+    /// <param name="id">The unique identifier of the generation to update</param>
+    /// <param name="dto">The updated data for the car model generation</param>
+    /// <returns>An IActionResult indicating the result of the operation</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
@@ -90,6 +115,11 @@ public class CarModelGenerationsController(IApplicationService<CarModelGeneratio
         }
     }
 
+    /// <summary>
+    /// Deletes a car model generation by its identifier
+    /// </summary>
+    /// <param name="id">The unique identifier of the generation to delete</param>
+    /// <returns>An IActionResult indicating the result of the deletion</returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]

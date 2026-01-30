@@ -1,18 +1,27 @@
 ﻿using CarRental.Application.Contracts.CarModel;
 using CarRental.Application.Interfaces;
-using CarRental.Domain.DataModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarRental.Api.Controllers;
 
+/// <summary>
+/// API Controller for managing car models
+/// </summary>
+/// <param name="service">The application service for car model operations</param>
+/// <param name="logger">The logger instance for diagnostics and activity tracking</param>
 [ApiController]
 [Route("api/[controller]")]
 public class CarModelController(IApplicationService<CarModelDto, CarModelCreateUpdateDto, Guid> service, ILogger<CarController> logger) : ControllerBase
 {
+    /// <summary>
+    /// Retrieves a list of all car models
+    /// </summary>
+    /// <returns>A collection of car model DTOs</returns>
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<List<CarModelDto>>> GetAll() {
+    public async Task<ActionResult<List<CarModelDto>>> GetAll()
+    {
         logger.LogInformation("{method} method of {controller} is called", nameof(GetAll), GetType().Name);
         try
         {
@@ -27,6 +36,11 @@ public class CarModelController(IApplicationService<CarModelDto, CarModelCreateU
         }
     }
 
+    /// <summary>
+    /// Retrieves a specific car model by its unique identifier
+    /// </summary>
+    /// <param name="id">The GUID of the car model</param>
+    /// <returns>The requested car model DTO</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
@@ -52,6 +66,11 @@ public class CarModelController(IApplicationService<CarModelDto, CarModelCreateU
         }
     }
 
+    /// <summary>
+    /// Creates a new car model entry
+    /// </summary>
+    /// <param name="dto">The data for the new car model</param>
+    /// <returns>The created car model DTO</returns>
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(500)]
@@ -71,6 +90,12 @@ public class CarModelController(IApplicationService<CarModelDto, CarModelCreateU
         }
     }
 
+    /// <summary>
+    /// Updates an existing car model
+    /// </summary>
+    /// <param name="id">The GUID of the car model to update</param>
+    /// <param name="dto">The updated information</param>
+    /// <returns>The result of the update operation</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
@@ -90,6 +115,11 @@ public class CarModelController(IApplicationService<CarModelDto, CarModelCreateU
         }
     }
 
+    /// <summary>
+    /// Deletes a car model from the system
+    /// </summary>
+    /// <param name="id">The GUID of the car model to remove</param>
+    /// <returns>An OK result if deleted, or NoContent if not found</returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]
@@ -99,7 +129,7 @@ public class CarModelController(IApplicationService<CarModelDto, CarModelCreateU
         logger.LogInformation("{method} method of {controller} is called with {id} parameter", nameof(Delete), GetType().Name, id);
         try
         {
-            var result = await service.Delete(id); 
+            var result = await service.Delete(id);
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(Delete), GetType().Name);
             return result ? Ok() : NoContent();
         }

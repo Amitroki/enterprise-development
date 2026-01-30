@@ -10,6 +10,13 @@ using OpenTelemetry.Trace;
 
 namespace CarRental.ServiceDefaults;
 
+/// <summary>
+/// This code provides a set of .NET Aspire service defaults 
+/// that standardize microservice infrastructure by configuring logs, metrics, and traces, 
+/// liveness and readiness, and service discovery. It also integrates resilience policies 
+/// for HTTP clients and sets up OTLP exporters, ensuring all services 
+/// in the cluster have consistent observability and fault-tolerance out of the box
+/// </summary>
 public static class Extensions
 {
     private const string HealthEndpointPath = "/health";

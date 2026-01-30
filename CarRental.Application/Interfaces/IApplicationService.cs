@@ -5,6 +5,7 @@ namespace CarRental.Application.Interfaces;
 /// </summary>
 /// <typeparam name="TDto">The data transfer object used for output.</typeparam>
 /// <typeparam name="TCreateUpdateDto">The data transfer object used for input operations.</typeparam>
+/// <typeparam name="TKey">The type of using key</typeparam>
 public interface IApplicationService<TDto, TCreateUpdateDto, TKey>
     where TDto : class
     where TCreateUpdateDto : class

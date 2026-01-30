@@ -6,12 +6,24 @@ using CarRental.Domain.InternalData.ComponentClasses;
 
 namespace CarRental.Application.Services;
 
+/// <summary>
+/// Service for managing car model generations, including linking generations to parent car models
+/// </summary>
+/// <param name="repository">The repository for model generation entities</param>
+/// <param name="modelRepository">The repository for car model entities</param>
+/// <param name="mapper">The AutoMapper instance for DTO conversion</param>
 public class CarModelGenerationService(
     IBaseRepository<CarModelGeneration, Guid> repository,
     IBaseRepository<CarModel, Guid> modelRepository,
     IMapper mapper)
     : IApplicationService<CarModelGenerationDto, CarModelGenerationCreateUpdateDto, Guid>
 {
+    /// <summary>
+    /// Creates a new model generation after validating that the associated car model exists
+    /// </summary>
+    /// <param name="dto">The model generation data transfer object</param>
+    /// <returns>The created model generation as a DTO</returns>
+    /// <exception cref="KeyNotFoundException">Thrown if the associated CarModel ID is invalid</exception>
     public async Task<CarModelGenerationDto> Create(CarModelGenerationCreateUpdateDto dto)
     {
         var entity = mapper.Map<CarModelGeneration>(dto);
@@ -25,13 +37,23 @@ public class CarModelGenerationService(
         return mapper.Map<CarModelGenerationDto>(entity);
     }
 
-    public async Task<CarModelGenerationDto> Read(Guid id)
+    /// <summary>
+    /// Retrieves a specific model generation by its unique identifier
+    /// </summary>
+    /// <param name="id">The unique identifier of the generation</param>
+    /// <returns>The mapped generation DTO</returns>
+    /// <exception cref="KeyNotFoundException">Thrown if the generation record is not found</exception>
+    public async Task<CarModelGenerationDto?> Read(Guid id)
     {
         var entity = await repository.Read(id)
             ?? throw new KeyNotFoundException($"CarModelGeneration with Id {id} not found.");
         return mapper.Map<CarModelGenerationDto>(entity);
     }
 
+    /// <summary>
+    /// Retrieves all model generations and asynchronously populates their parent models
+    /// </summary>
+    /// <returns>A list of model generation DTOs with linked model data</returns>
     public async Task<List<CarModelGenerationDto>> ReadAll()
     {
         var entities = await repository.ReadAll();
@@ -45,6 +67,13 @@ public class CarModelGenerationService(
         return mapper.Map<List<CarModelGenerationDto>>(entities);
     }
 
+    /// <summary>
+    /// Updates an existing model generation and refreshes its link to a car model
+    /// </summary>
+    /// <param name="dto">The updated data for the generation</param>
+    /// <param name="id">The identifier of the generation to update</param>
+    /// <returns>True if the update was successful; otherwise, false</returns>
+    /// <exception cref="KeyNotFoundException">Thrown if the new parent CarModel is not found</exception>
     public async Task<bool> Update(CarModelGenerationCreateUpdateDto dto, Guid id)
     {
         var existing = await repository.Read(id);
@@ -59,6 +88,11 @@ public class CarModelGenerationService(
         return await repository.Update(existing, id);
     }
 
+    /// <summary>
+    /// Deletes a car model generation record from the system
+    /// </summary>
+    /// <param name="id">The identifier of the generation to delete</param>
+    /// <returns>True if the deletion was successful</returns>
     public async Task<bool> Delete(Guid id)
         => await repository.Delete(id);
 }

@@ -4,15 +4,41 @@ using CarRental.Domain.InternalData.ComponentClasses;
 using MongoDB.EntityFrameworkCore.Extensions;
 
 namespace CarRental.Infrastructure;
-
+/// <summary>
+/// Database context for managing car rental entities in MongoDB
+/// </summary>
+/// <param name="options">The options to be used by the DbContext</param>
 public class CarRentalDbContext(DbContextOptions<CarRentalDbContext> options) : DbContext(options)
 {
+    /// <summary>
+    /// Gets the collection of cars
+    /// </summary>
     public DbSet<Car> Cars { get; init; }
+
+    /// <summary>
+    /// Gets the collection of clients
+    /// </summary>
     public DbSet<Client> Clients { get; init; }
+
+    /// <summary>
+    /// Gets the collection of rent records
+    /// </summary>
     public DbSet<Rent> Rents { get; init; }
+
+    /// <summary>
+    /// Gets the collection of car models
+    /// </summary>
     public DbSet<CarModel> CarModels { get; init; }
+
+    /// <summary>
+    /// Gets the collection of car model generations
+    /// </summary>
     public DbSet<CarModelGeneration> ModelGenerations { get; init; }
 
+    /// <summary>
+    /// Configures the database schema and maps entities to MongoDB collections
+    /// </summary>
+    /// <param name="modelBuilder">The builder being used to construct the model for this context</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
