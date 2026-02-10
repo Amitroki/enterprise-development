@@ -14,13 +14,19 @@ public class DbCarModelGenerationRepository(CarRentalDbContext context) : IBaseR
     /// Retrieves all model generations with their associated car models
     /// </summary>
     /// <returns>A list of all model generation entities</returns>
-    public async Task<List<CarModelGeneration>> ReadAll() =>
-        (await context.ModelGenerations.ToListAsync())
-        .Select(g =>
+    public async Task<List<CarModelGeneration>> ReadAll()
+    {
+        var generations = await context.ModelGenerations.ToListAsync();
+        var modelIds = generations.Select(g => g.ModelId).Distinct().ToList();
+        var models = await context.CarModels
+                                  .Where(m => modelIds.Contains(m.Id))
+                                  .ToListAsync();
+        foreach (var generation in generations)
         {
-            g.Model = context.CarModels.FirstOrDefault(m => m.Id == g.ModelId);
-            return g;
-        }).ToList();
+            generation.Model = models.FirstOrDefault(m => m.Id == generation.ModelId);
+        }
+        return generations;
+    }
 
     /// <summary>
     /// Finds a specific model generation by id and loads its associated car model
@@ -29,11 +35,10 @@ public class DbCarModelGenerationRepository(CarRentalDbContext context) : IBaseR
     /// <returns>The generation entity if found; otherwise, null</returns>
     public async Task<CarModelGeneration?> Read(Guid id)
     {
-        var list = await context.ModelGenerations.ToListAsync();
-        var entity = list.FirstOrDefault(x => x.Id == id);
+        var entity = await context.ModelGenerations.FirstOrDefaultAsync(x => x.Id == id);
         if (entity != null)
         {
-            entity.Model = context.CarModels.FirstOrDefault(m => m.Id == entity.ModelId);
+            entity.Model = await context.CarModels.FirstOrDefaultAsync(m => m.Id == entity.ModelId);
         }
         return entity;
     }

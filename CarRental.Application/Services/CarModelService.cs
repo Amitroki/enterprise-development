@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using Mapster;
 using CarRental.Application.Contracts.CarModel;
 using CarRental.Application.Interfaces;
 using CarRental.Domain.Interfaces;
@@ -10,10 +10,8 @@ namespace CarRental.Application.Services;
 /// Service for managing car model business logic and DTO mapping
 /// </summary>
 /// <param name="repository">The car model data repository.</param>
-/// <param name="mapper">The AutoMapper instance for entity-DTO transformations</param>
 public class CarModelService(
-    IBaseRepository<CarModel, Guid> repository,
-    IMapper mapper)
+    IBaseRepository<CarModel, Guid> repository)
     : IApplicationService<CarModelDto, CarModelCreateUpdateDto, Guid>
 {
     /// <summary>
@@ -23,10 +21,10 @@ public class CarModelService(
     /// <returns>The newly created car model DTO.</returns>
     public async Task<CarModelDto> Create(CarModelCreateUpdateDto dto)
     {
-        var entity = mapper.Map<CarModel>(dto);
+        var entity = dto.Adapt<CarModel>();
         var id = await repository.Create(entity);
         entity.Id = id;
-        return mapper.Map<CarModelDto>(entity);
+        return entity.Adapt<CarModelDto>();
     }
 
     /// <summary>
@@ -39,7 +37,7 @@ public class CarModelService(
     {
         var entity = await repository.Read(id)
             ?? throw new KeyNotFoundException($"CarModel with Id {id} not found.");
-        return mapper.Map<CarModelDto>(entity);
+        return entity.Adapt<CarModelDto>();
     }
 
     /// <summary>
@@ -49,7 +47,7 @@ public class CarModelService(
     public async Task<List<CarModelDto>> ReadAll()
     {
         var entities = await repository.ReadAll();
-        return mapper.Map<List<CarModelDto>>(entities);
+        return entities.Adapt<List<CarModelDto>>();
     }
 
     /// <summary>
@@ -61,9 +59,9 @@ public class CarModelService(
     public async Task<bool> Update(CarModelCreateUpdateDto dto, Guid id)
     {
         var existing = await repository.Read(id);
-        if (existing is null)
-            return false;
-        mapper.Map(dto, existing);
+        if (existing is null) return false;
+
+        dto.Adapt(existing);
         return await repository.Update(existing, id);
     }
 

@@ -1,4 +1,4 @@
-using AutoMapper;
+using Mapster;
 using CarRental.Application.Contracts.Rent;
 using CarRental.Application.Interfaces;
 using CarRental.Domain.DataModels;
@@ -12,12 +12,10 @@ namespace CarRental.Application.Services;
 /// <param name="repository">The rent data repository</param>
 /// <param name="carRepository">The car data repository</param>
 /// <param name="clientRepository">The client data repository</param>
-/// <param name="mapper">The AutoMapper instance for DTO mapping</param>
 public class RentService(
     IBaseRepository<Rent, Guid> repository,
     IBaseRepository<Car, Guid> carRepository,
-    IBaseRepository<Client, Guid> clientRepository,
-    IMapper mapper)
+    IBaseRepository<Client, Guid> clientRepository)
     : IApplicationService<RentDto, RentCreateUpdateDto, Guid>
 {
     /// <summary>
@@ -27,7 +25,7 @@ public class RentService(
     public async Task<List<RentDto>> ReadAll()
     {
         var rents = await repository.ReadAll();
-        return mapper.Map<List<RentDto>>(rents);
+        return rents.Adapt<List<RentDto>>();
     }
 
     /// <summary>
@@ -40,8 +38,7 @@ public class RentService(
     {
         var entity = await repository.Read(id)
             ?? throw new KeyNotFoundException($"Rent with Id {id} not found.");
-
-        return mapper.Map<RentDto>(entity);
+        return entity.Adapt<RentDto>();
     }
 
     /// <summary>
@@ -55,13 +52,13 @@ public class RentService(
             ?? throw new KeyNotFoundException($"Car with Id {dto.CarId} not found.");
         var client = await clientRepository.Read(dto.ClientId)
             ?? throw new KeyNotFoundException($"Client with Id {dto.ClientId} not found.");
-        var entity = mapper.Map<Rent>(dto);
+        var entity = dto.Adapt<Rent>();
         entity.Car = car;
         entity.Client = client;
         var id = await repository.Create(entity);
         var savedEntity = await repository.Read(id)
             ?? throw new InvalidOperationException("Created rent was not found.");
-        return mapper.Map<RentDto>(savedEntity);
+        return savedEntity.Adapt<RentDto>();
     }
 
     /// <summary>
@@ -73,9 +70,8 @@ public class RentService(
     public async Task<bool> Update(RentCreateUpdateDto dto, Guid id)
     {
         var existing = await repository.Read(id);
-        if (existing is null)
-            return false;
-        mapper.Map(dto, existing);
+        if (existing is null) return false;
+        dto.Adapt(existing);
         if (dto.CarId != existing.Car?.Id)
         {
             var car = await carRepository.Read(dto.CarId)

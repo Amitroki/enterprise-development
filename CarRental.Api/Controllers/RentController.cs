@@ -29,7 +29,7 @@ public class RentController(IApplicationService<RentDto, RentCreateUpdateDto, Gu
         catch (Exception ex)
         {
             logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(GetAll), GetType().Name);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+            return StatusCode(500);
         }
     }
 
@@ -52,13 +52,13 @@ public class RentController(IApplicationService<RentDto, RentCreateUpdateDto, Gu
         }
         catch (KeyNotFoundException ex)
         {
-            logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Get), GetType().Name);
-            return StatusCode(404, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+            logger.LogWarning(ex, "An exception happened during {method} method of {controller}", nameof(Get), GetType().Name);
+            return NotFound();
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Get), GetType().Name);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+            return StatusCode(500);
         }
     }
 
@@ -71,7 +71,7 @@ public class RentController(IApplicationService<RentDto, RentCreateUpdateDto, Gu
     [ProducesResponseType(500)]
     public async Task<ActionResult<RentDto>> Create(RentCreateUpdateDto dto)
     {
-        logger.LogInformation("{method} method of {controller} is called with {@dto} parameter", nameof(Create), GetType().Name, dto);
+        logger.LogInformation("{method} method of {controller} is called with {dto} parameter", nameof(Create), GetType().Name, dto);
         try
         {
             var createdRent = await rentService.Create(dto);
@@ -81,7 +81,7 @@ public class RentController(IApplicationService<RentDto, RentCreateUpdateDto, Gu
         catch (Exception ex)
         {
             logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Create), GetType().Name);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+            return StatusCode(500);
         }
     }
 
@@ -95,7 +95,7 @@ public class RentController(IApplicationService<RentDto, RentCreateUpdateDto, Gu
     [ProducesResponseType(500)]
     public async Task<ActionResult> Update(Guid id, RentCreateUpdateDto dto)
     {
-        logger.LogInformation("{method} method of {controller} is called with {key},{@dto} parameters", nameof(Update), GetType().Name, id, dto);
+        logger.LogInformation("{method} method of {controller} is called with {key},{dto} parameters", nameof(Update), GetType().Name, id, dto);
         try
         {
             var updatedRent = await rentService.Update(dto, id);
@@ -105,7 +105,7 @@ public class RentController(IApplicationService<RentDto, RentCreateUpdateDto, Gu
         catch (Exception ex)
         {
             logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Update), GetType().Name);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+            return StatusCode(500);
         }
     }
 
@@ -129,7 +129,7 @@ public class RentController(IApplicationService<RentDto, RentCreateUpdateDto, Gu
         catch (Exception ex)
         {
             logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Delete), GetType().Name);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+            return StatusCode(500);
         }
     }
 }

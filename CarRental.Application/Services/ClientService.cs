@@ -1,4 +1,4 @@
-using AutoMapper;
+using Mapster;
 using CarRental.Application.Contracts.Client;
 using CarRental.Application.Interfaces;
 using CarRental.Domain.DataModels;
@@ -10,10 +10,8 @@ namespace CarRental.Application.Services;
 /// Service for managing client-related business logic and DTO mapping.
 /// </summary>
 /// <param name="repository">The client data repository.</param>
-/// <param name="mapper">The AutoMapper instance for entity-DTO transformations.</param>
 public class ClientService(
-    IBaseRepository<Client, Guid> repository,
-    IMapper mapper)
+    IBaseRepository<Client, Guid> repository)
     : IApplicationService<ClientDto, ClientCreateUpdateDto, Guid>
 {
     /// <summary>
@@ -23,7 +21,7 @@ public class ClientService(
     public async Task<List<ClientDto>> ReadAll()
     {
         var entities = await repository.ReadAll();
-        return mapper.Map<List<ClientDto>>(entities);
+        return entities.Adapt<List<ClientDto>>();
     }
 
     /// <summary>
@@ -36,7 +34,7 @@ public class ClientService(
     {
         var entity = await repository.Read(id)
             ?? throw new KeyNotFoundException($"Client with Id {id} not found.");
-        return mapper.Map<ClientDto>(entity);
+        return entity.Adapt<ClientDto>();
     }
 
     /// <summary>
@@ -47,11 +45,11 @@ public class ClientService(
     /// <exception cref="InvalidOperationException">Thrown if the client cannot be retrieved after creation</exception>
     public async Task<ClientDto> Create(ClientCreateUpdateDto dto)
     {
-        var entity = mapper.Map<Client>(dto);
+        var entity = dto.Adapt<Client>();
         var id = await repository.Create(entity);
         var savedEntity = await repository.Read(id)
             ?? throw new InvalidOperationException("Created client was not found.");
-        return mapper.Map<ClientDto>(savedEntity);
+        return savedEntity.Adapt<ClientDto>();
     }
 
     /// <summary>
@@ -63,9 +61,8 @@ public class ClientService(
     public async Task<bool> Update(ClientCreateUpdateDto dto, Guid id)
     {
         var existing = await repository.Read(id);
-        if (existing is null)
-            return false;
-        mapper.Map(dto, existing);
+        if (existing is null) return false;
+        dto.Adapt(existing);
         return await repository.Update(existing, id);
     }
 

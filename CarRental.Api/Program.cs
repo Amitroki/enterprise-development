@@ -15,6 +15,9 @@ using CarRental.Infrastructure.Repository;
 using CarRental.ServiceDefaults;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
+using Mapster;
+using System.Reflection;
+using MapsterMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,10 +36,10 @@ builder.Services.AddSingleton(sp =>
     return client.GetDatabase("car-rental");
 });
 
-builder.Services.AddAutoMapper(config =>
-{
-    config.AddProfile(new CarRentalProfile());
-});
+var typeAdapterConfig = TypeAdapterConfig.GlobalSettings;
+typeAdapterConfig.Scan(Assembly.GetExecutingAssembly());
+builder.Services.AddSingleton(typeAdapterConfig);
+builder.Services.AddScoped<IMapper, ServiceMapper>();
 
 builder.Services.AddSingleton<DataSeed>();
 

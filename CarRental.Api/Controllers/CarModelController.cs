@@ -32,7 +32,7 @@ public class CarModelController(IApplicationService<CarModelDto, CarModelCreateU
         catch (Exception ex)
         {
             logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(GetAll), GetType().Name);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+            return StatusCode(500);
         }
     }
 
@@ -56,13 +56,13 @@ public class CarModelController(IApplicationService<CarModelDto, CarModelCreateU
         }
         catch (KeyNotFoundException ex)
         {
-            logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Get), GetType().Name);
-            return StatusCode(404, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+            logger.LogWarning(ex, "An exception happened during {method} method of {controller}", nameof(Get), GetType().Name);
+            return NotFound();
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Get), GetType().Name);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+            return StatusCode(500);
         }
     }
 
@@ -76,7 +76,7 @@ public class CarModelController(IApplicationService<CarModelDto, CarModelCreateU
     [ProducesResponseType(500)]
     public async Task<ActionResult<CarModelDto>> Create(CarModelCreateUpdateDto dto)
     {
-        logger.LogInformation("{method} method of {controller} is called with {@dto} parameter", nameof(Create), GetType().Name, dto);
+        logger.LogInformation("{method} method of {controller} is called with {dto} parameter", nameof(Create), GetType().Name, dto);
         try
         {
             var result = await service.Create(dto);
@@ -86,7 +86,7 @@ public class CarModelController(IApplicationService<CarModelDto, CarModelCreateU
         catch (Exception ex)
         {
             logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Create), GetType().Name);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+            return StatusCode(500);
         }
     }
 
@@ -101,7 +101,7 @@ public class CarModelController(IApplicationService<CarModelDto, CarModelCreateU
     [ProducesResponseType(500)]
     public async Task<IActionResult> Update(Guid id, CarModelCreateUpdateDto dto)
     {
-        logger.LogInformation("{method} method of {controller} is called with {key},{@dto} parameters", nameof(Update), GetType().Name, id, dto);
+        logger.LogInformation("{method} method of {controller} is called with {key},{dto} parameters", nameof(Update), GetType().Name, id, dto);
         try
         {
             var result = await service.Update(dto, id);
@@ -111,7 +111,7 @@ public class CarModelController(IApplicationService<CarModelDto, CarModelCreateU
         catch (Exception ex)
         {
             logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Update), GetType().Name);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+            return StatusCode(500);
         }
     }
 
@@ -136,7 +136,7 @@ public class CarModelController(IApplicationService<CarModelDto, CarModelCreateU
         catch (Exception ex)
         {
             logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(Delete), GetType().Name);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+            return StatusCode(500);
         }
     }
 }

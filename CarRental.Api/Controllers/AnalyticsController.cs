@@ -22,7 +22,7 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
     [ProducesResponseType(500)]
     public async Task<ActionResult<List<ClientDto>>> GetClientsByModel([FromQuery] string modelName)
     {
-        logger.LogInformation("{method} method of {controller} is called with {@string} parameter", nameof(GetClientsByModel), GetType().Name, modelName);
+        logger.LogInformation("{method} method of {controller} is called with {string} parameter", nameof(GetClientsByModel), GetType().Name, modelName);
         try
         {
             var result = await analyticsService.ReadClientsByModelName(modelName);
@@ -31,8 +31,8 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
         }
         catch (Exception ex) 
         {
-            logger.LogError("An exception happened during {method} method of {controller}: {@exception}", nameof(GetClientsByModel), GetType().Name, ex);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+            logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(GetClientsByModel), GetType().Name);
+            return StatusCode(500);
         }
     }
 
@@ -55,8 +55,8 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
         }
         catch (Exception ex)
         {
-            logger.LogError("An exception happened during {method} method of {controller}: {@exception}", nameof(GetCarsInRent), GetType().Name, ex);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+            logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(GetCarsInRent), GetType().Name);
+            return StatusCode(500);
         }
     }
 
@@ -78,8 +78,8 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
         }
         catch (Exception ex)
         {
-            logger.LogError("An exception happened during {method} method of {controller}: {@exception}", nameof(GetTop5Cars), GetType().Name, ex);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+            logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(GetTop5Cars), GetType().Name);
+            return StatusCode(500);
         }
     }
 
@@ -101,8 +101,8 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
         }
         catch (Exception ex)
         {
-            logger.LogError("An exception happened during {method} method of {controller}: {@exception}", nameof(GetAllCarsWithCount), GetType().Name, ex);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+            logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(GetAllCarsWithCount), GetType().Name);
+            return StatusCode(500);
         }
     }
 
@@ -124,8 +124,8 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
         }
         catch (Exception ex)
         {
-            logger.LogError("An exception happened during {method} method of {controller}: {@exception}", nameof(GetTop5Clients), GetType().Name, ex);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
+            logger.LogError(ex, "An exception happened during {method} method of {controller}", nameof(GetTop5Clients), GetType().Name);
+            return StatusCode(500);
         }
     }
 }

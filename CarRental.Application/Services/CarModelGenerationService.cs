@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using Mapster;
 using CarRental.Application.Contracts.CarModelGeneration;
 using CarRental.Application.Interfaces;
 using CarRental.Domain.Interfaces;
@@ -11,11 +11,9 @@ namespace CarRental.Application.Services;
 /// </summary>
 /// <param name="repository">The repository for model generation entities</param>
 /// <param name="modelRepository">The repository for car model entities</param>
-/// <param name="mapper">The AutoMapper instance for DTO conversion</param>
 public class CarModelGenerationService(
     IBaseRepository<CarModelGeneration, Guid> repository,
-    IBaseRepository<CarModel, Guid> modelRepository,
-    IMapper mapper)
+    IBaseRepository<CarModel, Guid> modelRepository)
     : IApplicationService<CarModelGenerationDto, CarModelGenerationCreateUpdateDto, Guid>
 {
     /// <summary>
@@ -26,15 +24,14 @@ public class CarModelGenerationService(
     /// <exception cref="KeyNotFoundException">Thrown if the associated CarModel ID is invalid</exception>
     public async Task<CarModelGenerationDto> Create(CarModelGenerationCreateUpdateDto dto)
     {
-        var entity = mapper.Map<CarModelGeneration>(dto);
-        var model = await modelRepository.Read(dto.ModelId);
-        if (model is null)
-            throw new KeyNotFoundException($"CarModel with Id {dto.ModelId} not found.");
+        var entity = dto.Adapt<CarModelGeneration>();
+        var model = await modelRepository.Read(dto.ModelId)
+            ?? throw new KeyNotFoundException($"CarModel with Id {dto.ModelId} not found.");
         entity.Model = model;
         entity.ModelId = model.Id;
         var id = await repository.Create(entity);
         entity.Id = id;
-        return mapper.Map<CarModelGenerationDto>(entity);
+        return entity.Adapt<CarModelGenerationDto>();
     }
 
     /// <summary>
@@ -47,7 +44,7 @@ public class CarModelGenerationService(
     {
         var entity = await repository.Read(id)
             ?? throw new KeyNotFoundException($"CarModelGeneration with Id {id} not found.");
-        return mapper.Map<CarModelGenerationDto>(entity);
+        return entity.Adapt<CarModelGenerationDto>();
     }
 
     /// <summary>
@@ -64,7 +61,7 @@ public class CarModelGenerationService(
                 generation.Model = await modelRepository.Read(generation.ModelId);
             }
         }
-        return mapper.Map<List<CarModelGenerationDto>>(entities);
+        return entities.Adapt<List<CarModelGenerationDto>>();
     }
 
     /// <summary>
@@ -77,12 +74,10 @@ public class CarModelGenerationService(
     public async Task<bool> Update(CarModelGenerationCreateUpdateDto dto, Guid id)
     {
         var existing = await repository.Read(id);
-        if (existing is null)
-            return false;
-        mapper.Map(dto, existing);
-        var model = await modelRepository.Read(dto.ModelId);
-        if (model is null)
-            throw new KeyNotFoundException($"CarModel with Id {dto.ModelId} not found.");
+        if (existing is null) return false;
+        dto.Adapt(existing);
+        var model = await modelRepository.Read(dto.ModelId)
+            ?? throw new KeyNotFoundException($"CarModel with Id {dto.ModelId} not found.");
         existing.Model = model;
         existing.ModelId = model.Id;
         return await repository.Update(existing, id);
