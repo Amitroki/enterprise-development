@@ -10,7 +10,8 @@ using CarRental.Domain.InternalData.ComponentClasses;
 namespace CarRental.Application;
 
 /// <summary>
-/// AutoMapper configuration profile for mapping between Domain entities and Application DTOs
+/// This code defines a Mapster configuration class 
+/// used to automate object-to-object mapping within a Car Rental application
 /// </summary>
 public class CarRentalMapsterConfig : IRegister
 {

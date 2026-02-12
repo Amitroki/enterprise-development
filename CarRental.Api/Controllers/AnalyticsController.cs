@@ -18,7 +18,6 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
     /// <param name="modelName">The name of the car model to filter by</param>
     [HttpGet("clients-by-model")]
     [ProducesResponseType(200)]
-    [ProducesResponseType(204)]
     [ProducesResponseType(500)]
     public async Task<ActionResult<List<ClientDto>>> GetClientsByModel([FromQuery] string modelName)
     {
@@ -27,7 +26,7 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
         {
             var result = await analyticsService.ReadClientsByModelName(modelName);
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(GetClientsByModel), GetType().Name);
-            return result != null ? Ok(result) : NoContent();
+            return Ok(result);
         }
         catch (Exception ex) 
         {
@@ -42,7 +41,6 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
     /// <param name="atTime">The point in time to check for active rentals</param>
     [HttpGet("cars-in-rent")]
     [ProducesResponseType(200)]
-    [ProducesResponseType(204)]
     [ProducesResponseType(500)]
     public async Task<ActionResult<List<CarInRentDto>>> GetCarsInRent([FromQuery] DateTime atTime)
     {
@@ -51,7 +49,7 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
         {
             var result = await analyticsService.ReadCarsInRent(atTime);
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(GetCarsInRent), GetType().Name);
-            return result != null ? Ok(result) : NoContent();
+            return Ok(result);
         }
         catch (Exception ex)
         {
@@ -65,7 +63,6 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
     /// </summary>
     [HttpGet("top-5-rented-cars")]
     [ProducesResponseType(200)]
-    [ProducesResponseType(204)]
     [ProducesResponseType(500)]
     public async Task<ActionResult<List<CarWithRentalCountDto>>> GetTop5Cars()
     {
@@ -74,7 +71,7 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
         {
             var result = await analyticsService.ReadTop5MostRentedCars();
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(GetTop5Cars), GetType().Name);
-            return result != null ? Ok(result) : NoContent();
+            return Ok(result);
         }
         catch (Exception ex)
         {
@@ -88,7 +85,6 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
     /// </summary>
     [HttpGet("all-cars-with-rental-count")]
     [ProducesResponseType(200)]
-    [ProducesResponseType(204)]
     [ProducesResponseType(500)]
     public async Task<ActionResult<List<CarWithRentalCountDto>>> GetAllCarsWithCount()
     {
@@ -97,7 +93,7 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
         {
             var result = await analyticsService.ReadAllCarsWithRentalCount();
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(GetAllCarsWithCount), GetType().Name);
-            return result != null ? Ok(result) : NoContent();
+            return Ok(result);
         }
         catch (Exception ex)
         {
@@ -111,7 +107,6 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
     /// </summary>
     [HttpGet("top-5-clients-by-money")]
     [ProducesResponseType(200)]
-    [ProducesResponseType(204)]
     [ProducesResponseType(500)]
     public async Task<ActionResult<List<ClientWithTotalAmountDto>>> GetTop5Clients()
     {
@@ -120,7 +115,7 @@ public class AnalyticsController(IAnalyticsService analyticsService, ILogger<Ana
         {
             var result = await analyticsService.ReadTop5ClientsByTotalAmount();
             logger.LogInformation("{method} method of {controller} executed successfully", nameof(GetTop5Clients), GetType().Name);
-            return result != null ? Ok(result) : NoContent();
+            return Ok(result);
         }
         catch (Exception ex)
         {
