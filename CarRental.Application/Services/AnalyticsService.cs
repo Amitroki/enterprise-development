@@ -1,7 +1,7 @@
 ﻿using Mapster;
 using CarRental.Application.Contracts.Analytics;
 using CarRental.Application.Contracts.Client;
-using CarRental.Application.Interfaces;
+using CarRental.Application.Contracts.Interfaces;
 using CarRental.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,6 +1,6 @@
 using Mapster;
 using CarRental.Application.Contracts.Rent;
-using CarRental.Application.Interfaces;
+using CarRental.Application.Contracts.Interfaces;
 using CarRental.Domain.DataModels;
 using CarRental.Domain.Interfaces;
 

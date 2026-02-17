@@ -1,4 +1,4 @@
-namespace CarRental.Application.Interfaces;
+namespace CarRental.Application.Contracts.Interfaces;
 
 /// <summary>
 /// Defines a generic contract for application services handling mapping between entities and DTOs.

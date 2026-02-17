@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using CarRental.Application.Interfaces;
+using CarRental.Application.Contracts.Interfaces;
 using CarRental.Application.Contracts.Rent;
 
 namespace CarRental.Api.Controllers;

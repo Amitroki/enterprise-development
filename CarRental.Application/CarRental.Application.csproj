@@ -1,11 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 <ItemGroup>
-    <ProjectReference Include="..\CarRental.Domain\CarRental.Domain.csproj" />
-    <ProjectReference Include="..\CarRental.Infrastructure\CarRental.Infrastructure.csproj" />
-</ItemGroup>
-
-<ItemGroup>
     <PackageReference Include="Mapster" Version="7.4.0" />
     <PackageReference Include="Mapster.DependencyInjection" Version="1.0.1" />
 </ItemGroup>
@@ -17,4 +12,10 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
 </PropertyGroup>
 
+<ItemGroup>
+    <ProjectReference Include="..\CarRental.Application.Contracts\CarRental.Application.Contracts.csproj" />
+    <ProjectReference Include="..\CarRental.Domain\CarRental.Domain.csproj" />
+    <ProjectReference Include="..\CarRental.Infrastructure\CarRental.Infrastructure.csproj" />
+</ItemGroup>
+	
 </Project>

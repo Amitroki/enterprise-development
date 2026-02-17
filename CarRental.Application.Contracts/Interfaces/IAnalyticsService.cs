@@ -1,7 +1,7 @@
 using CarRental.Application.Contracts.Client;
 using CarRental.Application.Contracts.Analytics;
 
-namespace CarRental.Application.Interfaces;
+namespace CarRental.Application.Contracts.Interfaces;
 
 /// <summary>
 /// Defines methods for business intelligence and data analysis across cars, clients, and rentals.

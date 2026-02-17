@@ -9,10 +9,11 @@
   <ItemGroup>
     <PackageReference Include="Bogus" Version="35.6.5" />
 	<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+	<PackageReference Include="Aspire.Confluent.Kafka" Version="13.0.2" />
   </ItemGroup>
-
+	
   <ItemGroup>
-    <ProjectReference Include="..\CarRental.Application\CarRental.Application.csproj" />
+    <ProjectReference Include="..\CarRental.Application.Contracts\CarRental.Application.Contracts.csproj" />
     <ProjectReference Include="..\CarRental.ServiceDefaults\CarRental.ServiceDefaults.csproj" />
   </ItemGroup>
 

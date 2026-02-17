@@ -1,23 +1,25 @@
-using CarRental.Application;
 using CarRental.Application.Contracts.Car;
 using CarRental.Application.Contracts.CarModel;
 using CarRental.Application.Contracts.CarModelGeneration;
 using CarRental.Application.Contracts.Client;
+using CarRental.Application.Contracts.Interfaces;
 using CarRental.Application.Contracts.Rent;
-using CarRental.Application.Interfaces;
 using CarRental.Application.Services;
 using CarRental.Domain.DataModels;
-using CarRental.Domain.Interfaces;
 using CarRental.Domain.DataSeed;
+using CarRental.Domain.Interfaces;
 using CarRental.Domain.InternalData.ComponentClasses;
 using CarRental.Infrastructure;
+using CarRental.Infrastructure.Kafka;
 using CarRental.Infrastructure.Repository;
 using CarRental.ServiceDefaults;
-using Microsoft.EntityFrameworkCore;
-using MongoDB.Driver;
+using Confluent.Kafka;
 using Mapster;
-using System.Reflection;
 using MapsterMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,6 +62,27 @@ builder.Services.AddScoped<IApplicationService<CarModelDto, CarModelCreateUpdate
 builder.Services.AddScoped<IApplicationService<CarModelGenerationDto, CarModelGenerationCreateUpdateDto, Guid>, CarModelGenerationService>();
 
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+
+builder.Services.AddOptions<ConsumerSettings>()
+    .Bind(builder.Configuration.GetSection("KafkaConsumer"));
+builder.Services.AddSingleton<IConsumer<Ignore, string>>(sp =>
+{
+    var settings = sp.GetRequiredService<IOptions<ConsumerSettings>>().Value;
+    var bootstrapServers = builder.Configuration.GetConnectionString("car-rental-kafka");
+    if (string.IsNullOrWhiteSpace(bootstrapServers))
+        throw new InvalidOperationException("Kafka connection string 'car-rental-kafka' is missing.");
+    var config = new ConsumerConfig
+    {
+        BootstrapServers = bootstrapServers,
+        GroupId = settings.GroupId,
+        AutoOffsetReset = AutoOffsetReset.Earliest,
+        EnableAutoCommit = settings.AutoCommitEnabled
+    };
+
+    return new ConsumerBuilder<Ignore, string>(config).Build();
+});
+
+builder.Services.AddHostedService<Consumer>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
