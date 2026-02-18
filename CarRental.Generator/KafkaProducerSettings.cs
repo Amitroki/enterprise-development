@@ -19,4 +19,9 @@ public class KafkaProducerSettings
     /// Delay between produce retries in milliseconds
     /// </summary>
     public int RetryDelayMs { get; init; } = 1000;
+
+    /// <summary>
+    /// Maximum number of parallel produce operations
+    /// </summary>
+    public int MaxParallelism { get; init; } = 10;
 }

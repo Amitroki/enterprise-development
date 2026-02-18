@@ -1,8 +1,7 @@
-using CarRental.Generator;
+﻿using CarRental.Generator;
 using CarRental.Generator.Generation;
 using CarRental.ServiceDefaults;
 using Confluent.Kafka;
-using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,27 +9,13 @@ builder.Services.Configure<GeneratorOptions>(builder.Configuration.GetSection("G
 
 builder.AddServiceDefaults();
 
+builder.AddKafkaProducer<Null, string>("car-rental-kafka");
+
 builder.Services.AddSingleton<RentGeneratorService>();
-builder.Services.AddSingleton(sp =>
-{
-    var cfg = sp.GetRequiredService<IConfiguration>();
-    var bootstrapServers = cfg.GetConnectionString("car-rental-kafka");
-    if (string.IsNullOrWhiteSpace(bootstrapServers))
-        throw new InvalidOperationException("Kafka connection string 'car-rental-kafka' is missing.");
-    var producerConfig = new ProducerConfig
-    {
-        BootstrapServers = bootstrapServers,
-        Acks = Acks.All
-    };
-
-    return new ProducerBuilder<Null, string>(producerConfig).Build();
-});
-
 builder.Services.AddSingleton<KafkaProducer>();
-builder.Services.AddControllers().AddJsonOptions(o =>
-{
-    o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-});
+
+builder.Services.AddControllers();
+builder.Services.AddAuthorization();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -58,6 +43,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
-app.MapControllers();
+app.MapControllers();    // ← маппит контроллеры
 
 app.Run();

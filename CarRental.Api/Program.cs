@@ -1,3 +1,4 @@
+using CarRental.Api;
 using CarRental.Application.Contracts.Car;
 using CarRental.Application.Contracts.CarModel;
 using CarRental.Application.Contracts.CarModelGeneration;
@@ -10,14 +11,11 @@ using CarRental.Domain.DataSeed;
 using CarRental.Domain.Interfaces;
 using CarRental.Domain.InternalData.ComponentClasses;
 using CarRental.Infrastructure;
-using CarRental.Infrastructure.Kafka;
 using CarRental.Infrastructure.Repository;
 using CarRental.ServiceDefaults;
-using Confluent.Kafka;
 using Mapster;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System.Reflection;
 
@@ -63,26 +61,7 @@ builder.Services.AddScoped<IApplicationService<CarModelGenerationDto, CarModelGe
 
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 
-builder.Services.AddOptions<ConsumerSettings>()
-    .Bind(builder.Configuration.GetSection("KafkaConsumer"));
-builder.Services.AddSingleton<IConsumer<Ignore, string>>(sp =>
-{
-    var settings = sp.GetRequiredService<IOptions<ConsumerSettings>>().Value;
-    var bootstrapServers = builder.Configuration.GetConnectionString("car-rental-kafka");
-    if (string.IsNullOrWhiteSpace(bootstrapServers))
-        throw new InvalidOperationException("Kafka connection string 'car-rental-kafka' is missing.");
-    var config = new ConsumerConfig
-    {
-        BootstrapServers = bootstrapServers,
-        GroupId = settings.GroupId,
-        AutoOffsetReset = AutoOffsetReset.Earliest,
-        EnableAutoCommit = settings.AutoCommitEnabled
-    };
-
-    return new ConsumerBuilder<Ignore, string>(config).Build();
-});
-
-builder.Services.AddHostedService<Consumer>();
+builder.AddGeneratorService();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

@@ -55,13 +55,18 @@ public class Consumer(
                     if (message is null)
                         continue;
 
+                    if (message.IsPartitionEOF || message.Message == null)
+                    {
+                        logger.LogDebug("Reached end of partition or empty message");
+                        continue;
+                    }
+
                     var payload = message.Message?.Value;
 
                     if (string.IsNullOrWhiteSpace(payload))
                     {
                         logger.LogWarning("Empty payload. Topic={Topic}, Offset={Offset}",
                             message.Topic, message.Offset.Value);
-                        CommitIfNeeded(message);
                         continue;
                     }
 
@@ -125,9 +130,8 @@ public class Consumer(
             }
             catch (Exception ex)
             {
-                logger.LogWarning(ex, "Error closing consumer");
+                logger.LogError(ex, "Error closing consumer");
             }
-
             logger.LogInformation("KafkaConsumer stopped");
         }
     }
@@ -140,6 +144,13 @@ public class Consumer(
     {
         if (_settings.AutoCommitEnabled)
             return;
+
+        if (message == null || message.Message == null || message.IsPartitionEOF)
+        {
+            logger.LogDebug("Skipping commit for null/EOF message");
+            return;
+        }
+
         try
         {
             consumer.Commit(message);

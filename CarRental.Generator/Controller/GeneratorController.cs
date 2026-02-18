@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using CarRental.Generator.Generation;
 using CarRental.Application.Contracts.Rent;
+using CarRental.Application.Contracts.Generator;
 
 namespace CarRental.Generator.Controller;
 
@@ -20,39 +21,29 @@ public class GeneratorController(
     /// <summary>
     /// Generates and publishes rental contracts to Kafka in batches
     /// </summary>
-    /// <param name="totalCount">Total number of rentals to generate</param>
-    /// <param name="batchSize">Number of rentals per batch</param>
-    /// <param name="delayMs">Delay between batches in milliseconds</param>
+    /// <param name="request">Generation parameters</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Result with generation statistics</returns>
     [HttpPost("rentals")]
-    public async Task<ActionResult> GenerateRentals(
-        [FromQuery] int totalCount,
-        [FromQuery] int batchSize,
-        [FromQuery] int delayMs,
+    public async Task<ActionResult<GenerateRentalsResponse>> GenerateRentals(
+        [FromQuery] GenerateRentalsRequest request,
         CancellationToken cancellationToken)
     {
-        if (totalCount <= 0)
-            return BadRequest("totalCount must be greater than 0.");
-
-        if (batchSize <= 0)
-            return BadRequest("batchSize must be greater than 0.");
-
-        if (delayMs < 0)
-            return BadRequest("delayMs must be greater than or equal to 0.");
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
         logger.LogInformation("Rental generation requested. TotalCount={TotalCount}, BatchSize={BatchSize}, DelayMs={DelayMs}",
-            totalCount, batchSize, delayMs);
+            request.TotalCount, request.BatchSize, request.DelayMs);
 
         var sent = 0;
         var batches = 0;
 
         try
         {
-            while (sent < totalCount && !cancellationToken.IsCancellationRequested)
+            while (sent < request.TotalCount && !cancellationToken.IsCancellationRequested)
             {
-                var remaining = totalCount - sent;
-                var currentBatchSize = Math.Min(batchSize, remaining);
+                var remaining = request.TotalCount - sent;
+                var currentBatchSize = Math.Min(request.BatchSize, remaining);
 
                 IList<RentCreateUpdateDto> batch = rentGenerator.GenerateContract(currentBatchSize);
 
@@ -61,41 +52,41 @@ public class GeneratorController(
                 sent += currentBatchSize;
                 batches++;
 
-                if (sent < totalCount && delayMs > 0)
+                if (sent < request.TotalCount && request.DelayMs > 0)
                 {
-                    await Task.Delay(delayMs, cancellationToken);
+                    await Task.Delay(request.DelayMs, cancellationToken);
                 }
             }
 
             logger.LogInformation("Generation finished. TotalSent={TotalSent}, Batches={Batches}", sent, batches);
 
-            return Ok(new
+            return Ok(new GenerateRentalsResponse
             {
-                TotalRequested = totalCount,
+                TotalRequested = request.TotalCount,
                 TotalSent = sent,
-                BatchSize = batchSize,
-                DelayMs = delayMs,
+                BatchSize = request.BatchSize,
+                DelayMs = request.DelayMs,
                 Batches = batches,
                 Canceled = false
             });
         }
         catch (OperationCanceledException)
         {
-            logger.LogInformation("Generation was canceled. TotalSent={TotalSent}/{TotalCount}", sent, totalCount);
+            logger.LogInformation("Generation was canceled. TotalSent={TotalSent}/{TotalCount}", sent, request.TotalCount);
 
-            return Ok(new
+            return Ok(new GenerateRentalsResponse
             {
-                TotalRequested = totalCount,
+                TotalRequested = request.TotalCount,
                 TotalSent = sent,
-                BatchSize = batchSize,
-                DelayMs = delayMs,
+                BatchSize = request.BatchSize,
+                DelayMs = request.DelayMs,
                 Batches = batches,
                 Canceled = true
             });
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Unexpected error during generation/publishing. TotalSent={TotalSent}/{TotalCount}", sent, totalCount);
+            logger.LogError(ex, "Unexpected error during generation/publishing. TotalSent={TotalSent}/{TotalCount}", sent, request.TotalCount);
             return StatusCode(500, "An error occurred while generating and sending rentals");
         }
     }

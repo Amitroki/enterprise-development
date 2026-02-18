@@ -17,7 +17,8 @@ public class KafkaProducer(
     IProducer<Null, string> producer,
     IOptions<KafkaProducerSettings> options)
 {
-    private readonly KafkaProducerSettings _settings = options.Value;
+    private readonly KafkaProducerSettings _settings = options.Value
+        ?? throw new InvalidOperationException("KafkaProducerSettings must be configured.");
 
     /// <summary>
     /// Sends a rent DTO as a JSON message to Kafka
@@ -65,7 +66,7 @@ public class KafkaProducer(
     }
 
     /// <summary>
-    /// Sends a batch of rent DTOs as JSON messages to Kafka in parallel
+    /// Sends a batch of rent DTOs as JSON messages to Kafka with controlled parallelism
     /// </summary>
     /// <param name="dtos">Rent DTOs to send</param>
     /// <param name="cancellationToken">Cancellation token</param>
@@ -77,10 +78,29 @@ public class KafkaProducer(
             return;
         }
 
-        logger.LogInformation("Starting to produce {Count} rent messages to Kafka topic: {Topic}",
-            dtos.Count, _settings.TopicName);
+        logger.LogInformation("Starting to produce {Count} rent messages to Kafka topic: {Topic} with parallelism {MaxParallelism}",
+            dtos.Count, _settings.TopicName, _settings.MaxParallelism);
 
-        var tasks = dtos.Select(dto => Produce(dto, cancellationToken));
+        using var semaphore = new SemaphoreSlim(_settings.MaxParallelism);
+        var tasks = new List<Task>();
+
+        foreach (var dto in dtos)
+        {
+            await semaphore.WaitAsync(cancellationToken);
+
+            tasks.Add(Task.Run(async () =>
+            {
+                try
+                {
+                    await Produce(dto, cancellationToken);
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            }, cancellationToken));
+        }
+
         await Task.WhenAll(tasks);
 
         logger.LogInformation("Successfully produced all {Count} rent messages to Kafka", dtos.Count);
