@@ -27,9 +27,6 @@ public class KafkaProducer(
     /// <param name="cancellationToken">Cancellation token</param>
     public async Task Produce(RentCreateUpdateDto dto, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(_settings.TopicName))
-            throw new InvalidOperationException("KafkaProducerSettings.TopicName must be configured.");
-
         var payload = JsonSerializer.Serialize(dto);
 
         for (var attempt = 1; attempt <= _settings.MaxProduceAttempts; attempt++)

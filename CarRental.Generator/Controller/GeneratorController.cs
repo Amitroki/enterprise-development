@@ -29,9 +29,6 @@ public class GeneratorController(
         [FromQuery] GenerateRentalsRequest request,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         logger.LogInformation("Rental generation requested. TotalCount={TotalCount}, BatchSize={BatchSize}, DelayMs={DelayMs}",
             request.TotalCount, request.BatchSize, request.DelayMs);
 

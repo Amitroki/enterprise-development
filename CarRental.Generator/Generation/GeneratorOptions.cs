@@ -1,7 +1,7 @@
 ﻿namespace CarRental.Generator.Generation;
 
 /// <summary>
-/// Configuration options for the rental data generator
+/// Configuration options for the rental data generator.
 /// </summary>
 public class GeneratorOptions
 {
@@ -11,7 +11,7 @@ public class GeneratorOptions
     private List<Guid>? _clientIds;
 
     /// <summary>
-    /// List of available car IDs as strings
+    /// List of available car IDs as strings (for configuration binding).
     /// </summary>
     public List<string> CarIds
     {
@@ -19,12 +19,12 @@ public class GeneratorOptions
         set
         {
             _carIdStrings = value;
-            _carIds = value?.Select(Guid.Parse).ToList();
+            _carIds = ParseGuids(value, "CarIds");
         }
     }
 
     /// <summary>
-    /// List of available client IDs as strings
+    /// List of available client IDs as strings (for configuration binding).
     /// </summary>
     public List<string> ClientIds
     {
@@ -32,17 +32,36 @@ public class GeneratorOptions
         set
         {
             _clientIdStrings = value;
-            _clientIds = value?.Select(Guid.Parse).ToList();
+            _clientIds = ParseGuids(value, "ClientIds");
         }
     }
 
     /// <summary>
-    /// List of available car IDs as GUIDs
+    /// List of available car IDs as GUIDs (pre-parsed for performance).
     /// </summary>
     public List<Guid> CarIdGuids => _carIds ?? new();
 
     /// <summary>
-    /// List of available client IDs as GUIDs
+    /// List of available client IDs as GUIDs (pre-parsed for performance).
     /// </summary>
     public List<Guid> ClientIdGuids => _clientIds ?? new();
+
+    private static List<Guid> ParseGuids(List<string>? values, string fieldName)
+    {
+        if (values == null)
+            return new List<Guid>();
+        var result = new List<Guid>();
+        for (var i = 0; i < values.Count; i++)
+        {
+            var value = values[i];
+            if (string.IsNullOrWhiteSpace(value))
+                throw new FormatException($"{fieldName}[{i}] is null or empty");
+            if (!Guid.TryParse(value, out var guid))
+                throw new FormatException($"{fieldName}[{i}] has invalid GUID format: {value}");
+
+            result.Add(guid);
+        }
+
+        return result;
+    }
 }

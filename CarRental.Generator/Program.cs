@@ -43,6 +43,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
-app.MapControllers();    // ← маппит контроллеры
+app.MapControllers();
 
 app.Run();
