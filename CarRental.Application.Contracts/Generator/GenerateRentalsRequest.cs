@@ -25,6 +25,6 @@ public class GenerateRentalsRequest
     /// Delay between batches in milliseconds
     /// </summary>
     [Required]
-    [Range(100, 30000, ErrorMessage = "DelayMs must be between 0 and 60000.")]
+    [Range(100, 30000, ErrorMessage = "DelayMs must be between 0 and 30000.")]
     public int DelayMs { get; set; }
 }
